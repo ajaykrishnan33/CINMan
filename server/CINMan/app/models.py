@@ -65,12 +65,14 @@ class SoftwareInstallation(models.Model):
 class Alert(models.Model):
 	
 	ALERT_NATURE = (
-    (1, "Severe"),
+    (1, "Severe")
     (2, "Mild")
 	)
   
   log_entry = models.OneToOneField(LogEntry, null=True, blank=True, related_name="alert")
   alert_type = models.IntegerField(choices=ALERT_NATURE)
+  
+  send_mail_to_admin()
 
 class LogEntry(models.Model):
   
@@ -84,21 +86,19 @@ class LogEntry(models.Model):
     (7, "Authentication log"),
     (8, "Login records"),
     (9, "apt"),
-    (10,"dpkg"),
-    
+    (10,"dpkg")
   )
   
   SEVERITY_CHOICES = (
-    (1, "Severe"),
+    (1, "Severe")
     (2, "Mild")
 	)
   
   machine = models.ForeignKey(Machine, null=False, blank=False, related_name="machine_logs")
-  timestamp = models.DateTimeField(auto_now_add=True)
+  timestamp = models.DateTimeField()
   type = models.IntegerField(choices=TYPE_CHOICES)
   text = models.CharField(max_length=1000)
   severity = models.IntegerField(choices=SEVERITY_CHOICES)
-  user = models.ForeignKey(MachineUser, null=False, blank=False, related_name="user_log")
   
 
 class CINManUser(models.Model): #Admin
@@ -107,15 +107,26 @@ class CINManUser(models.Model): #Admin
   password=models.CharField(max_length=20)
   primary_mail=models.CharField(max_length=100)
   secondary_mail=models.CharField(max_length=100)
-  mobile_number= models.IntegerField();
+  mobile_number= models.IntegerField()
   
-      
+class MachineLoginSession(models.Model):
+  
+  machine = models.ForeignKey(Machine, related_name="login_sessions")
+  user = models.ForeignKey(MachineUser, related_name="login_sessions")
+  login_time = models.DateTimeField()
+  logout_time = models.DateTimeField()
+  data_downloaded = models.IntegerField()
+  data_uploaded = models.IntegerField()  
+  
 class MachineUser(models.Model):
   
-  username = models.CharField(max_length=20)   
+  username = models.CharField(max_length=20)
   last_logged_in_date = models.DateTimeField()
   last_logged_in_machine = models.ForeignKey(Machine, null=False, blank=False, related_name="last_logged_in_users")
   last_failed_login_date = models.DateTimeField()
   failed_login_count = models.IntegerField()
   suspicious_activity_count = models.IntegerField()
   number_of_simultaneous_logins = models.IntegerField()
+  currently_logged = models.BooleanField(default=False)
+  
+  get_all_logged_in_machines()
