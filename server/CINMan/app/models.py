@@ -46,7 +46,7 @@ class Software(models.Model):
 	TYPE_CHOICES = (
 		#think of types'
   (1, "System Softwares"),
-  (2, "Application Softwares");
+  (2, "Application Softwares")
 	)
 
 	machine = models.ManyToManyField(Machine, null=False, blank=False, through=SoftwareInstallation, related_name="installed_softwares")
@@ -65,7 +65,7 @@ class SoftwareInstallation(models.Model):
 class Alert(models.Model):
 	
 	ALERT_NATURE = (
-    (1, "Severe")
+    (1, "Severe"),
     (2, "Mild")
 	)
   
@@ -81,15 +81,15 @@ class LogEntry(models.Model):
     (4, "Mail server logs"),
     (5, "System boot log"),
     (6, "MySQL database server log file"),
-    (7, "Authentication log");
-    (8, "Login records");
+    (7, "Authentication log"),
+    (8, "Login records"),
     (9, "apt"),
-    (10,"dpkg");
+    (10,"dpkg"),
     
   )
   
   SEVERITY_CHOICES = (
-    (1, "Severe")
+    (1, "Severe"),
     (2, "Mild")
 	)
   
@@ -98,6 +98,7 @@ class LogEntry(models.Model):
   type = models.IntegerField(choices=TYPE_CHOICES)
   text = models.CharField(max_length=1000)
   severity = models.IntegerField(choices=SEVERITY_CHOICES)
+  user = models.ForeignKey(MachineUser, null=False, blank=False, related_name="user_log")
   
 
 class CINManUser(models.Model): #Admin
