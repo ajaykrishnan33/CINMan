@@ -30,8 +30,8 @@ dictionary={"authentication logs":authentication_logs[1],"kernel logs":kernel_lo
 
 for key,value in dictionary.iteritems():
 	value = unicode(value, errors='ignore')
-	if key is "login logs":
-		print value	
+	# if key is "login logs":
+	# 	print value	
 
 
 json_file=simplejson.dumps(dictionary)

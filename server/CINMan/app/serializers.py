@@ -28,3 +28,8 @@ class MachineLoginSessionSerializer(serializers.ModelSerializer):
 		model = MachineLoginSession
 		fields = make_all_fields(MachineLoginSession)
 
+class LogEntrySerializer(serializers.ModelSerializer):
+	class Meta:
+		model = LogEntry
+		fields = make_all_fields(LogEntry, ("alert",))
+

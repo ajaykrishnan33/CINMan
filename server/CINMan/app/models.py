@@ -70,16 +70,13 @@ class Alert(models.Model):
 
 class LogEntry(models.Model):
     TYPE_CHOICES = (
-        (1, "General message and system related logs"),
-        (2, "Authentication logs"),
-        (3, "Kernel logs"),
-        (4, "Mail server logs"),
-        (5, "System boot log"),
-        (6, "MySQL database server log file"),
-        (7, "Authentication log"),
-        (8, "Login records"),
-        (9, "apt"),
-        (10,"dpkg")
+        (1, "auth.log"),
+        (2, "kern.log"),
+        (3, "daemon.log"),
+        (4, "dpkg.log"),
+        (5, "boot.log"),
+        (8, "lastlog"),
+        (9, "wtmp")
     )
 
     SEVERITY_CHOICES = (
@@ -90,8 +87,9 @@ class LogEntry(models.Model):
     machine = models.ForeignKey(Machine, null=False, blank=False, related_name="machine_logs")
     timestamp = models.DateTimeField()
     log_entry_type = models.IntegerField(choices=TYPE_CHOICES)
-    text = models.CharField(max_length=1000)
-    severity = models.IntegerField(choices=SEVERITY_CHOICES)
+    text = models.TextField(null=True, blank=True)
+    user = models.ForeignKey('MachineUser', null=True, blank=True, related_name="log_entries")
+    severity = models.IntegerField(choices=SEVERITY_CHOICES, default=2)
   
 
 class CINManUser(models.Model): #Admin
@@ -113,7 +111,7 @@ class MachineLoginSession(models.Model):
   
 class MachineUser(models.Model):
   
-    username = models.CharField(max_length=20)
+    user = models.OneToOneField(User, related_name="machineuser_profile")  
     last_logged_in_date = models.DateTimeField(null=True, blank=True)
     last_logged_in_machine = models.ForeignKey(Machine, null=True, blank=True, related_name="last_logged_in_users")
     last_failed_login_date = models.DateTimeField(null=True, blank=True)

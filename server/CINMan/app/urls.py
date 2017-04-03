@@ -19,4 +19,7 @@ urlpatterns = [
 
 	url(r'^machineuser/$', views.MachineUserListView.as_view()),
 	url(r'^machineuser/(?P<pk>[0-9]+)/$', views.MachineUserDetailView.as_view()),
+
+	url(r'^logentry/$', views.LogEntryListView.as_view()),
+	url(r'^logentry/(?P<pk>[0-9]+)/$', views.LogEntryDetailView.as_view()),
 ]
