@@ -1,7 +1,8 @@
 $(document).ready(function(){
-	var authToken = "7f10607a9f14e83cb5a4bab9b4e77dc83faa89f5";
+	var authToken = "f0221fe06b3d888e5c2f6b9a47ecc40e435b4775";
 	var machines = [];
 	var users = [];
+	var logs = [];
     $.ajax
 	  ({
 	    type: "GET",
@@ -44,7 +45,7 @@ $(document).ready(function(){
 	$("#machines").click(function(){
 		$("#well").html("");
 		$("#heading").text("Machine List");
-		machines=[]
+		machines=[];
 		$.ajax
 		  ({
 		    type: "GET",
@@ -71,6 +72,7 @@ $(document).ready(function(){
 	$("#users").click(function(){
 		$("#well").html("");
 		$("#heading").text("User List");
+		users=[];
 		$.ajax
 		  ({
 		    type: "GET",
@@ -85,7 +87,7 @@ $(document).ready(function(){
 		    	for(user in response){
 		    		console.log(user);
 		    		users.push(response[user]);
-		    		$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='user' data-id="+response[user]["id"]+" style='color:green;cursor:pointer;'>"+response[user]["username"]+"</a></div></div>");		    	}
+		    		$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='user' data-id="+response[user]["id"]+" style='color:green;cursor:pointer;'>"+response[user]["user"]+"</a></div></div>");		    	}
 		    }
 		});
 	});
@@ -93,20 +95,24 @@ $(document).ready(function(){
 	$("#activity").click(function(){
 		$("#well").html("");
 		$("#heading").text("Activity Logs");
+		logs=[];
 		$.ajax
 		  ({
 		    type: "GET",
-		    url: "http://localhost:8000/app/machine/",
+		    url: "http://localhost:8000/app/logentry/",
 		    dataType: 'json',
 		    async: false,
 		    beforeSend: function (xhr) {
 			    xhr.setRequestHeader ("Authorization", "Token " + authToken);
 			},
 		    success: function (response){
-		    	//console.log(response);
+		    	console.log(response);
 		    	$("#well").append("<div class='dropdown'><button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Select Machine I.P.<span class='caret'></span></button><ul id='ips' class='dropdown-menu'></ul></div><div id='logs'></div>");
 		    	for(machine in machines){
 		    		$("#ips").append("<li><a id='iplog' data-id="+machines[machine]["id"]+" href='#'>"+machines[machine]["ip_address"]+"</a></li>");
+		    	}
+		    	for(log in response){
+		    		logs.push(response[log]);
 		    	}
 		    }
 		});
@@ -120,7 +126,7 @@ $(document).ready(function(){
 		var man = parseInt($(this).attr("data-id"));
 		var manx = "";
 		for(mac in machines){
-			manx =machines[mac]["id"] 
+			manx = machines[mac]["id"] 
 			if(manx===man){
 				req=mac;
 				break;
@@ -155,7 +161,7 @@ $(document).ready(function(){
 		}
 		console.log(users[req])
 		var req_mac = users[req];
-		$("#well").html("<div style='padding: 10px;'><img style='display: inline-block;height: 68px;width: 68px' src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXhqsqwmN807b9fGFbGa4xk_8mPSirTe13ZmXIgml6LD3lst2xv2MB2Q'><h4 style='display: inline-block;margin-left: 75px;'>"+req_mac["username"]+"</h4></div><li>Currently Logged In:"+req_mac["currently_logged"]+"</li><li>Failed Logins:"+req_mac["failed_login_count"]+"</li><li>Last Failed Login date:"+req_mac["last_failed_login_date"]+"</li><li>Last Login Date:"+req_mac["last_logged_in_date"]+"</li><li>Suspicious Activity Count:"+req_mac["suspicious_activity_count"]+"</li>");
+		$("#well").html("<div style='padding: 10px;'><img style='display: inline-block;height: 68px;width: 68px' src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXhqsqwmN807b9fGFbGa4xk_8mPSirTe13ZmXIgml6LD3lst2xv2MB2Q'><h4 style='display: inline-block;margin-left: 75px;'>"+req_mac["user"]+"</h4></div><li>Currently Logged In:"+req_mac["currently_logged"]+"</li><li>Failed Logins:"+req_mac["failed_login_count"]+"</li><li>Last Failed Login date:"+req_mac["last_failed_login_date"]+"</li><li>Last Login Date:"+req_mac["last_logged_in_date"]+"</li><li>Suspicious Activity Count:"+req_mac["suspicious_activity_count"]+"</li>");
 		$("#well").append("<li>Login Sessions:</li>")
 		for(x in req_mac["login_sessions"]){
 			$("#well").append("<p data-id="+req_mac['login_sessions'][x]+" style='cursor:pointer;' id='machine'>      "+req_mac['login_sessions'][x]+"</p>")
@@ -168,17 +174,16 @@ $(document).ready(function(){
 		var req = 0;
 		var man = parseInt($(this).attr("data-id"));
 		var manx = "";
-		for(mac in machines){
-			manx = machines[mac]["id"] 
+		for(mac in logs){
+			manx = parseInt(logs[mac]["machine"]) ;
 			if(manx===man){
-				req=mac;
-				break;
+				if(logs[mac]['severity']<2)
+					$("#logs").append("<p style='color:green'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
+				if(logs[mac]['severity']===2)
+					$("#logs").append("<p style='color:yellow'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
+				if(logs[mac]['severity']>2)
+					$("#logs").append("<p style='color:red'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
 			}
-		}
-		console.log(machines[req])
-		var req_mac = machines[req];
-		for(x in req_mac["machine_logs"]){
-			$("#logs").append("<p>"+req_mac['machine_logs'][x]+"</p>")
 		}
 	});
 });
