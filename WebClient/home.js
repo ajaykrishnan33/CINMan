@@ -1,12 +1,14 @@
 $(document).ready(function(){
-	var authToken = "f0221fe06b3d888e5c2f6b9a47ecc40e435b4775";
+	var authToken = "4ebbf010a608d85a618d1ef482511a0cb9e07f83";
 	var machines = [];
 	var users = [];
 	var logs = [];
+	var host = "localhost";
+	var port = "8000";
     $.ajax
 	  ({
 	    type: "GET",
-	    url: "http://localhost:8000/app/machine/",
+	    url: "http://"+host+":"+port+"/app/machine/",
 	    dataType: 'json',
 	    async: false,
 	    beforeSend: function (xhr) {
@@ -14,20 +16,21 @@ $(document).ready(function(){
 		},
 	    success: function (response){
 	    	//console.log(response);
+	    	$("#well").append("<input type='text' id='search' name='search' class='form-control' style='margin-bottom:5px;width:250px;' placeholder='Search by Machine I.P.'><div id='subwell'></div>");
 	    	for(machine in response){
 	    		//console.log(machine);
 	    		machines.push(response[machine]);
 	    		if(response[machine]["active"])
-	    			$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:green;cursor:pointer;'>"+response[machine]["ip_address"]+"</a></div></div>");
+	    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:green;cursor:pointer;'>"+response[machine]["ip_address"]+"</a></div></div>");
 	    		else
-	    			$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:red;cursor:pointer'>"+response[machine]["ip_address"]+"</a></div></div>");
+	    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:red;cursor:pointer'>"+response[machine]["ip_address"]+"</a></div></div>");
 	    	}
 	    }
 	});
 	  $.ajax
 		  ({
 		    type: "GET",
-		    url: "http://localhost:8000/app/machineuser/",
+		    url: "http://"+host+":"+port+"/app/machineuser/",
 		    dataType: 'json',
 		    async: false,
 		    beforeSend: function (xhr) {
@@ -49,7 +52,7 @@ $(document).ready(function(){
 		$.ajax
 		  ({
 		    type: "GET",
-		    url: "http://localhost:8000/app/machine/",
+		    url: "http://"+host+":"+port+"/app/machine/",
 		    dataType: 'json',
 		    async: false,
 		    beforeSend: function (xhr) {
@@ -57,13 +60,14 @@ $(document).ready(function(){
 			},
 		    success: function (response){
 		    	//console.log(response);
+		    	$("#well").append("<input type='text' id='search' name='search' class='form-control' style='margin-bottom:5px;width:250px;' placeholder='Search by Machine I.P.'><div id='subwell'></div>");
 		    	for(machine in response){
 		    		console.log(machine);
 		    		machines.push(response[machine]);
 		    		if(response[machine]["active"])
-		    			$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:green;cursor:pointer;'>"+response[machine]["ip_address"]+"</a></div></div>");
+		    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:green;cursor:pointer;'>"+response[machine]["ip_address"]+"</a></div></div>");
 		    		else
-		    			$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:red;cursor:pointer'>"+response[machine]["ip_address"]+"</a></div></div>");
+		    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:red;cursor:pointer'>"+response[machine]["ip_address"]+"</a></div></div>");
 		    	}
 		    }
 		});
@@ -76,7 +80,7 @@ $(document).ready(function(){
 		$.ajax
 		  ({
 		    type: "GET",
-		    url: "http://localhost:8000/app/machineuser/",
+		    url: "http://"+host+":"+port+"/app/machineuser/",
 		    dataType: 'json',
 		    async: false,
 		    beforeSend: function (xhr) {
@@ -87,7 +91,7 @@ $(document).ready(function(){
 		    	for(user in response){
 		    		console.log(user);
 		    		users.push(response[user]);
-		    		$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='user' data-id="+response[user]["id"]+" style='color:green;cursor:pointer;'>"+response[user]["user"]+"</a></div></div>");		    	}
+		    		$("#well").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='user' data-id="+response[user]["id"]+" style='color:green;cursor:pointer;'>"+response[user]["name"]+"</a></div></div>");		    	}
 		    }
 		});
 	});
@@ -95,29 +99,55 @@ $(document).ready(function(){
 	$("#activity").click(function(){
 		$("#well").html("");
 		$("#heading").text("Activity Logs");
-		logs=[];
-		$.ajax
-		  ({
-		    type: "GET",
-		    url: "http://localhost:8000/app/logentry/",
-		    dataType: 'json',
-		    async: false,
-		    beforeSend: function (xhr) {
-			    xhr.setRequestHeader ("Authorization", "Token " + authToken);
-			},
-		    success: function (response){
-		    	console.log(response);
-		    	$("#well").append("<div class='dropdown'><button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Select Machine I.P.<span class='caret'></span></button><ul id='ips' class='dropdown-menu'></ul></div><div id='logs'></div>");
-		    	for(machine in machines){
-		    		$("#ips").append("<li><a id='iplog' data-id="+machines[machine]["id"]+" href='#'>"+machines[machine]["ip_address"]+"</a></li>");
-		    	}
-		    	for(log in response){
-		    		logs.push(response[log]);
-		    	}
-		    }
-		});
+		
+		var flag = true;
+		callback();
+		setInterval(callback, 5000);
+		function callback(){
+			logs=[];
+			console.log("Trying...");
+			$.ajax
+			  ({
+			    type: "GET",
+			    url: "http://"+host+":"+port+"/app/logentry/",
+			    dataType: 'json',
+			    async: false,
+			    beforeSend: function (xhr) {
+				    xhr.setRequestHeader ("Authorization", "Token " + authToken);
+				    $("#ips").html("");
+				},
+			    success: function (response){
+			    	console.log(response);
+			    	if(flag)
+			    		$("#well").append("<div class='dropdown'><button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Select Machine I.P.<span class='caret'></span></button><ul id='ips' class='dropdown-menu'></ul></div><div id='logs'></div>");			    	
+			    	flag=false;
+			    	for(machine in machines){
+			    		$("#ips").append("<li><a id='iplog' data-id="+machines[machine]["id"]+" href='#'>"+machines[machine]["ip_address"]+"</a></li>");
+			    	}
+			    	for(log in response){
+			    		logs.push(response[log]);
+			    	}
+			    }
+			});
+		}
 	});
 
+	$(document).on("input","#search",function(){
+		console.log("cu,");
+		$("#subwell").html("");
+		var machinesX = [];
+		var inputval = $("#search").val();
+		for(mac in machines){
+			if(machines[mac]["ip_address"].search(inputval)>-1)
+				machinesX.push(machines[mac]);
+		}
+		for(machine in machinesX){
+    		if(machinesX[machine]["active"])
+    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+machinesX[machine]["id"]+" style='color:green;cursor:pointer;'>"+machinesX[machine]["ip_address"]+"</a></div></div>");
+    		else
+    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+machinesX[machine]["id"]+" style='color:red;cursor:pointer'>"+machinesX[machine]["ip_address"]+"</a></div></div>");
+    	}
+	});
 
 	$(document).on("click","#machine",function(){
 		$("#well").html("");
@@ -140,10 +170,14 @@ $(document).ready(function(){
 		for(x in req_mac["last_logged_in_users"]){
 			$("#well").append("<p data-id="+req_mac['last_logged_in_users'][x]+" style='cursor:pointer;' id='user'>      "+req_mac['last_logged_in_users'][x]+"</p>")
 		}
+		if(req_mac["last_logged_in_users"].length===0)
+			$("#well").append("<p style='cursor:pointer;'>None</p>")			
 		$("#well").append("<li>Installed Softwares:</li>")
 		for(x in req_mac["installed_softwares"]){
 			$("#well").append("<p data-id="+req_mac['installed_softwares'][x]+" id='software'>      "+req_mac['installed_softwares'][x]+"</p>")
 		}
+		if(req_mac["installed_softwares"].length===0)
+			$("#well").append("<p style='cursor:pointer;'>None</p>")
 	});
 
 	$(document).on("click","#user",function(){
@@ -161,15 +195,20 @@ $(document).ready(function(){
 		}
 		console.log(users[req])
 		var req_mac = users[req];
-		$("#well").html("<div style='padding: 10px;'><img style='display: inline-block;height: 68px;width: 68px' src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXhqsqwmN807b9fGFbGa4xk_8mPSirTe13ZmXIgml6LD3lst2xv2MB2Q'><h4 style='display: inline-block;margin-left: 75px;'>"+req_mac["user"]+"</h4></div><li>Currently Logged In:"+req_mac["currently_logged"]+"</li><li>Failed Logins:"+req_mac["failed_login_count"]+"</li><li>Last Failed Login date:"+req_mac["last_failed_login_date"]+"</li><li>Last Login Date:"+req_mac["last_logged_in_date"]+"</li><li>Suspicious Activity Count:"+req_mac["suspicious_activity_count"]+"</li>");
+		$("#well").html("<div style='padding: 10px;'><img style='display: inline-block;height: 68px;width: 68px' src='https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXhqsqwmN807b9fGFbGa4xk_8mPSirTe13ZmXIgml6LD3lst2xv2MB2Q'><h4 style='display: inline-block;margin-left: 75px;'>"+req_mac["name"]+"</h4></div><li>Currently Logged In:"+req_mac["currently_logged"]+"</li><li>Failed Logins:"+req_mac["failed_login_count"]+"</li><li>Last Failed Login date:"+req_mac["last_failed_login_date"]+"</li><li>Last Login Date:"+req_mac["last_logged_in_date"]+"</li><li>Suspicious Activity Count:"+req_mac["suspicious_activity_count"]+"</li>");
 		$("#well").append("<li>Login Sessions:</li>")
 		for(x in req_mac["login_sessions"]){
 			$("#well").append("<p data-id="+req_mac['login_sessions'][x]+" style='cursor:pointer;' id='machine'>      "+req_mac['login_sessions'][x]+"</p>")
 		}
+		if(req_mac["login_sessions"].length===0)
+			$("#well").append("<p style='cursor:pointer;'>None</p>")
 	});
 
 	$(document).on("click","#iplog",function(){
-		$("#logs").html("");
+		$("#well").html("<div class='dropdown'><button class='btn btn-primary dropdown-toggle' type='button' data-toggle='dropdown'>Select Machine I.P.<span class='caret'></span></button><ul id='ips' class='dropdown-menu'></ul></div><div id='logs'></div>");
+		for(machine in machines){
+			    		$("#ips").append("<li><a id='iplog' data-id="+machines[machine]["id"]+" href='#'>"+machines[machine]["ip_address"]+"</a></li>");
+			    	}
 		$("#logs").append("<h3>Showing logs for Machine "+$(this).text()+"</h3>")
 		var req = 0;
 		var man = parseInt($(this).attr("data-id"));
