@@ -56,11 +56,17 @@
     		<h1 style="text-align: center;font-family: 'Revalia', cursive;color:white">CINMan</h1>
   		</header>
 		<div class="container" id = "cont">
-				<button type="button" id="activity" class="btn btn-primary">View Activity</button>
-				<button type="button" id="users" class="btn btn-primary">View Users</button>
-				<button type="button" id="machines" class="btn btn-primary">View Machines</button>
-				<h2 id="heading" style="padding: 10px;margin-top:0px;text-align: center;font-family: 'Revalia', cursive;color:white">Machine List</h2>
+				<button type="button" id="activity" class="btn btn-primary" style="display: none;">View Activity</button>
+				<button type="button" id="users" class="btn btn-primary" style="display: none;">View Users</button>
+				<button type="button" id="machines" class="btn btn-primary" style="display: none;">View Machines</button>
+				<h2 id="heading" style="padding: 10px;margin-top:0px;text-align: center;font-family: 'Revalia', cursive;color:white">Please Login</h2>
 			  	<div class="well" id ="well" style="background-color: #777">
+			  		<form name="login" id="login">
+						Username<input type="text" id="userid"/>
+						Password<input type="password" id="pswrd"/>
+						<input type="submit" value="Login"/>
+						<input type="reset" value="Cancel"/>
+					</form>
 			  	</div>
 		</div>
 	</body>

@@ -1,49 +1,81 @@
 $(document).ready(function(){
-	var authToken = "4ebbf010a608d85a618d1ef482511a0cb9e07f83";
+	var authToken = localStorage.getItem("authToken");
 	var machines = [];
 	var users = [];
 	var logs = [];
 	var host = "localhost";
 	var port = "8000";
-    $.ajax
-	  ({
-	    type: "GET",
-	    url: "http://"+host+":"+port+"/app/machine/",
-	    dataType: 'json',
-	    async: false,
-	    beforeSend: function (xhr) {
-		    xhr.setRequestHeader ("Authorization", "Token " + authToken);
-		},
-	    success: function (response){
+	$("#login").submit(function(){
+  /*function to check userid & password*/
+	      //var $form = form;
+	      //var serializedDatal $(this).serialize();
+	      var username=$("#userid").val();
+	      var password=$("#pswrd").val();
+          $.ajax
+	      ({
+	        type: "POST",
+	        url: "http://"+host+":"+port+"/api-token-auth/",
+	       dataType: 'json',
+	       async: false,
+           data: {"username":username,"password":password},
+	       success: function (response){
 	    	//console.log(response);
-	    	$("#well").append("<input type='text' id='search' name='search' class='form-control' style='margin-bottom:5px;width:250px;' placeholder='Search by Machine I.P.'><div id='subwell'></div>");
-	    	for(machine in response){
-	    		//console.log(machine);
-	    		machines.push(response[machine]);
-	    		if(response[machine]["active"])
-	    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:green;cursor:pointer;'>"+response[machine]["ip_address"]+"</a></div></div>");
-	    		else
-	    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:red;cursor:pointer'>"+response[machine]["ip_address"]+"</a></div></div>");
-	    	}
-	    }
+	    	// alert(response["token"]);
+	    	authToken = response["token"];
+	    	
+	    	//console.log(localStorage.getItem("authToken"));
+	    	$("#machines").show();
+	    	$("#users").show();
+	    	$("#activity").show();
+	    	$("#well").html("");
+	    	$("#heading").text("Machine List");
+	    	   $.ajax
+			  ({
+			    type: "GET",
+			    url: "http://"+host+":"+port+"/app/machine/",
+			    dataType: 'json',
+			    async: false,
+			    beforeSend: function (xhr) {
+				    xhr.setRequestHeader ("Authorization", "Token " + authToken);
+				},
+			    success: function (response){
+			    	//console.log(response);
+			    	$("#well").append("<input type='text' id='search' name='search' class='form-control' style='margin-bottom:5px;width:250px;' placeholder='Search by Machine I.P.'><div id='subwell'></div>");
+			    	for(machine in response){
+			    		//console.log(machine);
+			    		machines.push(response[machine]);
+			    		if(response[machine]["active"])
+			    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:green;cursor:pointer;'>"+response[machine]["ip_address"]+"</a></div></div>");
+			    		else
+			    			$("#subwell").append("<div class='panel panel-info' style='margin-bottom: 5px;'><div class='panel-body' style='text-align: center;'><p id='machine' data-id="+response[machine]["id"]+" style='color:red;cursor:pointer'>"+response[machine]["ip_address"]+"</a></div></div>");
+			    	}
+			    }
+			});
+			  $.ajax
+				  ({
+				    type: "GET",
+				    url: "http://"+host+":"+port+"/app/machineuser/",
+				    dataType: 'json',
+				    async: false,
+				    beforeSend: function (xhr) {
+					    xhr.setRequestHeader ("Authorization", "Token " + authToken);
+					},
+				    success: function (response){
+				    	//console.log(response);
+				    	for(user in response){
+				    		console.log(user);
+				    		users.push(response[user]);
+				    		}		    		
+				    }
+				});
+	    	
+	    	  	},
+	    	  	error:function(response){
+	    	  		$("#heading").text("Login Failed");
+	    	  	}
+	      });
 	});
-	  $.ajax
-		  ({
-		    type: "GET",
-		    url: "http://"+host+":"+port+"/app/machineuser/",
-		    dataType: 'json',
-		    async: false,
-		    beforeSend: function (xhr) {
-			    xhr.setRequestHeader ("Authorization", "Token " + authToken);
-			},
-		    success: function (response){
-		    	//console.log(response);
-		    	for(user in response){
-		    		console.log(user);
-		    		users.push(response[user]);
-		    		}		    		
-		    }
-		});
+ 
 
 	$("#machines").click(function(){
 		$("#well").html("");
