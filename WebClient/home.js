@@ -164,6 +164,45 @@ $(document).ready(function(){
 		}
 	});
 
+	$(document).on("click","#activity2",function(){
+		var dat_id = $(this).attr("data-id");
+		$("#well").html("<div id='logs'><button type='button' id='activity2' data-id="+dat_id+" class='btn btn-primary'><span class='glyphicon glyphicon-refresh'></span></button></div>");
+		$("#heading").text("Activity Logs");
+		
+		var flag = true;
+		callback();
+		//setInterval(callback, 5000);
+		function callback(){
+			logs=[];
+			$("#well").html("<div id='logs'><button type='button' id='activity2' data-id="+dat_id+" class='btn btn-primary'><span class='glyphicon glyphicon-refresh'></span></div>");
+			console.log("Trying...");
+			$.ajax
+			  ({
+			    type: "GET",
+			    url: "http://"+host+":"+port+"/app/logentry/?machine="+dat_id,
+			    dataType: 'json',
+			    async: false,
+			    beforeSend: function (xhr) {
+				    xhr.setRequestHeader ("Authorization", "Token " + authToken);
+				},
+			    success: function (response){
+			    	console.log(response);
+			    	for(log in response){
+			    		logs.push(response[log]);
+			    	}
+			    	for(mac in logs){
+							if(logs[mac]['severity']<2)
+								$("#logs").append("<p style='color:green'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
+							if(logs[mac]['severity']===2)
+								$("#logs").append("<p style='color:yellow'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
+							if(logs[mac]['severity']>2)
+								$("#logs").append("<p style='color:red'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
+					}
+			    }
+			});
+		}
+	});
+
 	$(document).on("input","#search",function(){
 		console.log("cu,");
 		$("#subwell").html("");
@@ -197,7 +236,7 @@ $(document).ready(function(){
 		console.log(machines[req])
 		//$("#well").text(machines[req]);
 		var req_mac = machines[req];
-		$("#well").html("<div style='padding: 10px;'><img style='display: inline-block;height: 50px;width: 68px' src='http://www.clipartkid.com/images/74/monitor-clip-art-at-clker-com-vector-clip-art-online-royalty-free-h2yVSl-clipart.png'><h4 style='display: inline-block;margin-left: 75px;'>"+req_mac["ip_address"]+"</h4></div><li>Active:"+req_mac["active"]+"</li><li>MAC Address:"+req_mac["mac_address"]+"</li><li>CPU Speed:"+req_mac["cpu_speed"]+"</li><li>HardDisk Description:"+req_mac["ram_capacity"]+"</li><li>HardDisk Capacity:"+req_mac["harddisk_capacity"]+"</li>");
+		$("#well").html("<button type='button' id='activity2' class='btn btn-primary' data-id="+req_mac["id"]+" >View Machine Activity</button><div style='padding: 10px;'><img style='display: inline-block;height: 50px;width: 68px' src='http://www.clipartkid.com/images/74/monitor-clip-art-at-clker-com-vector-clip-art-online-royalty-free-h2yVSl-clipart.png'><h4 style='display: inline-block;margin-left: 75px;'>"+req_mac["ip_address"]+"</h4></div><li>Active:"+req_mac["active"]+"</li><li>MAC Address:"+req_mac["mac_address"]+"</li><li>CPU Speed:"+req_mac["cpu_speed"]+"</li><li>HardDisk Description:"+req_mac["ram_capacity"]+"</li><li>HardDisk Capacity:"+req_mac["harddisk_capacity"]+"</li>");
 		$("#well").append("<li>Logged In UserIds:</li>")
 		for(x in req_mac["last_logged_in_users"]){
 			$("#well").append("<p data-id="+req_mac['last_logged_in_users'][x]+" style='cursor:pointer;' id='user'>      "+req_mac['last_logged_in_users'][x]+"</p>")
