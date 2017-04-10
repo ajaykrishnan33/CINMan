@@ -16,7 +16,7 @@ p = subprocess.Popen(['tail', '-n', '0', '-f', '/var/log/auth.log'], stdout=subp
 for line in iter(p.stdout.readline, b''):
 	x = line.find("authentication failure")
 	if x >= 0 and line.find("sudo"):
-		timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[2:4]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
+		timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[1:3]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
 		username = line.split("logname=")[1].split(" ")[0]
 		data = {
 			"event" : "auth_failure",
@@ -33,7 +33,7 @@ for line in iter(p.stdout.readline, b''):
 		x = line.find("incorrect password")
 		if x >= 0:
 			count = line.split(" incorrect password")[0].split(" ")[-1]
-			timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[2:4]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
+			timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[1:3]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
 			command = line[line.find("COMMAND=") + 8:-1]
 			pwd = line[line.find("PWD=") + 4:-1].split(" ")[0]
 			data = {

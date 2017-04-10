@@ -28,6 +28,9 @@ class MachineDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
 
+    def perform_update(self, serializer):
+        serializer.save(active=True)
+
 class MachineActivateView(APIView):
     def post(self, request, pk, format=None):
         pk = int(pk)
