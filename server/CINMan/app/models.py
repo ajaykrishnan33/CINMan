@@ -19,14 +19,14 @@ class Machine(models.Model):
     mac_address = models.CharField(max_length=20, null=True, blank=True)
     address_width = models.IntegerField(choices=ADDRESS_WIDTH_CHOICES, default=1)
     ram_capacity = models.IntegerField(null=True, blank=True); ## in MBs
-    ram_description = models.CharField(max_length=100, null=True, blank=True)
-    cpu_speed = models.IntegerField(null=True, blank=True); ## in GHz
+    ram_description = models.TextField(null=True, blank=True)
+    cpu_speed = models.FloatField(null=True, blank=True); ## in GHz
     cpu_description = models.CharField(max_length=100, null=True, blank=True)
-    harddisk_capacity = models.IntegerField(null=True, blank=True); ## in GBs
-    harddisk_description = models.CharField(max_length=100, null=True, blank=True)
-    motherboard_description = models.CharField(max_length=100, null=True, blank=True)
+    harddisk_capacity = models.FloatField(null=True, blank=True); ## in GBs
+    harddisk_description = models.TextField(null=True, blank=True)
+    motherboard_description = models.TextField(null=True, blank=True)
     os_distro = models.IntegerField(choices=OS_CHOICES, null=True, blank=True)
-    kernel_version = models.CharField(max_length=20, null=True, blank=True)
+    kernel_version = models.CharField(max_length=30, null=True, blank=True)
     active = models.BooleanField(default=False)
 
 class Peripheral(models.Model):
@@ -76,7 +76,8 @@ class LogEntry(models.Model):
         (4, "dpkg.log"),
         (5, "boot.log"),
         (8, "lastlog"),
-        (9, "wtmp")
+        (9, "wtmp"),
+        (10, "peripherals")
     )
 
     SEVERITY_CHOICES = (
@@ -110,7 +111,7 @@ class MachineLoginSession(models.Model):
     data_uploaded = models.IntegerField(null=True, blank=True)  
   
 class MachineUser(models.Model):
-  
+    name = models.CharField(max_length=255, null=True, blank=True)
     user = models.OneToOneField(User, related_name="machineuser_profile")  
     last_logged_in_date = models.DateTimeField(null=True, blank=True)
     last_logged_in_machine = models.ForeignKey(Machine, null=True, blank=True, related_name="last_logged_in_users")

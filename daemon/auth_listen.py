@@ -1,15 +1,15 @@
 import subprocess
 import requests
-import netifaces as ni
+# import netifaces as ni
 import datetime
 import json
 
-machineid = 2
-ipaddr = ni.ifaddresses("wlan0")[2][0]['addr']
+machineid = 1
+# ipaddr = ni.ifaddresses("wlan0")[2][0]['addr']
 
-headers = {"Authorization" : "Token 5f05236f9e0186437e6f8e9e9217e32072f31952"}
+headers = {"Authorization" : "Token 3d7441c3bc2a224b1091c81ec7c152464aadc54c"}
 
-SERVER_URL = "http://localhost:5000/app/logentry/"
+SERVER_URL = "http://10.21.187.123:5000/app/logentry/"
 
 p = subprocess.Popen(['tail', '-n', '0', '-f', '/var/log/auth.log'], stdout=subprocess.PIPE)
 

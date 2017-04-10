@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -21,11 +23,11 @@ class Migration(migrations.Migration):
             name='CINManUser',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('username', models.CharField(max_length=20)),
-                ('password', models.CharField(max_length=20)),
-                ('primary_mail', models.CharField(max_length=100)),
-                ('secondary_mail', models.CharField(max_length=100)),
-                ('mobile_number', models.IntegerField()),
+                ('fullname', models.CharField(max_length=20)),
+                ('primary_mail', models.CharField(max_length=100, null=True, blank=True)),
+                ('secondary_mail', models.CharField(max_length=100, null=True, blank=True)),
+                ('mobile_number', models.CharField(max_length=15, null=True, blank=True)),
+                ('user', models.ForeignKey(related_name='user_profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -33,37 +35,38 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField()),
-                ('log_entry_type', models.IntegerField(choices=[(1, b'General message and system related logs'), (2, b'Authentication logs'), (3, b'Kernel logs'), (4, b'Mail server logs'), (5, b'System boot log'), (6, b'MySQL database server log file'), (7, b'Authentication log'), (8, b'Login records'), (9, b'apt'), (10, b'dpkg')])),
-                ('text', models.CharField(max_length=1000)),
-                ('severity', models.IntegerField(choices=[(1, b'Severe'), (2, b'Mild')])),
+                ('log_entry_type', models.IntegerField(choices=[(1, b'auth.log'), (2, b'kern.log'), (3, b'daemon.log'), (4, b'dpkg.log'), (5, b'boot.log'), (8, b'lastlog'), (9, b'wtmp')])),
+                ('text', models.TextField(null=True, blank=True)),
+                ('severity', models.IntegerField(default=2, choices=[(1, b'Severe'), (2, b'Mild')])),
             ],
         ),
         migrations.CreateModel(
             name='Machine',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('ip_address', models.CharField(max_length=20)),
-                ('mac_address', models.CharField(max_length=20)),
+                ('ip_address', models.CharField(max_length=20, null=True, blank=True)),
+                ('mac_address', models.CharField(max_length=20, null=True, blank=True)),
                 ('address_width', models.IntegerField(default=1, choices=[(1, b'64-bit'), (2, b'32-bit')])),
-                ('ram_capacity', models.IntegerField()),
-                ('ram_description', models.CharField(max_length=100)),
-                ('cpu_speed', models.IntegerField()),
-                ('cpu_description', models.CharField(max_length=100)),
-                ('harddisk_capacity', models.IntegerField()),
-                ('harddisk_description', models.CharField(max_length=100)),
-                ('motherboard_description', models.CharField(max_length=100)),
-                ('os_distro', models.IntegerField(choices=[(1, b'Ubuntu'), (2, b'RedHat')])),
-                ('kernel_version', models.CharField(max_length=20)),
+                ('ram_capacity', models.IntegerField(null=True, blank=True)),
+                ('ram_description', models.CharField(max_length=100, null=True, blank=True)),
+                ('cpu_speed', models.IntegerField(null=True, blank=True)),
+                ('cpu_description', models.CharField(max_length=100, null=True, blank=True)),
+                ('harddisk_capacity', models.IntegerField(null=True, blank=True)),
+                ('harddisk_description', models.CharField(max_length=100, null=True, blank=True)),
+                ('motherboard_description', models.CharField(max_length=100, null=True, blank=True)),
+                ('os_distro', models.IntegerField(blank=True, null=True, choices=[(1, b'Ubuntu'), (2, b'RedHat')])),
+                ('kernel_version', models.CharField(max_length=20, null=True, blank=True)),
+                ('active', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
             name='MachineLoginSession',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('login_time', models.DateTimeField()),
-                ('logout_time', models.DateTimeField()),
-                ('data_downloaded', models.IntegerField()),
-                ('data_uploaded', models.IntegerField()),
+                ('login_time', models.DateTimeField(null=True, blank=True)),
+                ('logout_time', models.DateTimeField(null=True, blank=True)),
+                ('data_downloaded', models.IntegerField(null=True, blank=True)),
+                ('data_uploaded', models.IntegerField(null=True, blank=True)),
                 ('machine', models.ForeignKey(related_name='login_sessions', to='app.Machine')),
             ],
         ),
@@ -71,14 +74,15 @@ class Migration(migrations.Migration):
             name='MachineUser',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('username', models.CharField(max_length=20)),
-                ('last_logged_in_date', models.DateTimeField()),
-                ('last_failed_login_date', models.DateTimeField()),
-                ('failed_login_count', models.IntegerField()),
-                ('suspicious_activity_count', models.IntegerField()),
-                ('number_of_simultaneous_logins', models.IntegerField()),
+                ('name', models.CharField(max_length=255, null=True, blank=True)),
+                ('last_logged_in_date', models.DateTimeField(null=True, blank=True)),
+                ('last_failed_login_date', models.DateTimeField(null=True, blank=True)),
+                ('failed_login_count', models.IntegerField(null=True, blank=True)),
+                ('suspicious_activity_count', models.IntegerField(null=True, blank=True)),
+                ('number_of_simultaneous_logins', models.IntegerField(default=0)),
                 ('currently_logged', models.BooleanField(default=False)),
-                ('last_logged_in_machine', models.ForeignKey(related_name='last_logged_in_users', to='app.Machine')),
+                ('last_logged_in_machine', models.ForeignKey(related_name='last_logged_in_users', blank=True, to='app.Machine', null=True)),
+                ('user', models.OneToOneField(related_name='machineuser_profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -125,6 +129,11 @@ class Migration(migrations.Migration):
             model_name='logentry',
             name='machine',
             field=models.ForeignKey(related_name='machine_logs', to='app.Machine'),
+        ),
+        migrations.AddField(
+            model_name='logentry',
+            name='user',
+            field=models.ForeignKey(related_name='log_entries', blank=True, to='app.MachineUser', null=True),
         ),
         migrations.AddField(
             model_name='alert',
