@@ -41,6 +41,7 @@ class Machine(models.Model):
         message = RedisMessage("Machine")
         # and somewhere else
         redis_publisher.publish_message(message)
+        super(Machine, self).save(*args, **kwargs)
 
 class Peripheral(models.Model):
 
@@ -95,6 +96,7 @@ class Alert(models.Model):
         message = RedisMessage("Alert:"+self.text)
         # and somewhere else
         redis_publisher.publish_message(message)
+        super(Alert, self).save(*args, **kwargs)
 
 class LogEntry(models.Model):
     TYPE_CHOICES = (

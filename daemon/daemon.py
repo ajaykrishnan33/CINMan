@@ -5,7 +5,7 @@ from auth_listen import auth_listener
 # from usb_detect import usb_listener
 
 headers = {"Authorization" : "Token 3d7441c3bc2a224b1091c81ec7c152464aadc54c"}
-SERVER_URL = "http://localhost:5000/app/"
+SERVER_URL = "http://localhost:8000/app/"
 
 payload = get_system_info()
 r = requests.get(SERVER_URL+"machine/?mac_address="+payload["mac_address"], headers=headers)

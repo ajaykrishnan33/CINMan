@@ -60,7 +60,7 @@ def get_system_info():
 	hardware_platform = commands.getstatusoutput("uname -i")[1]
 	operating_system = commands.getstatusoutput("uname -o")[1]
 	ramstuff = commands.getstatusoutput("cat /proc/meminfo")
-	mem_total = ramstuff[1].split('MemTotal:')[1].split('\n')[0].strip()
+	mem_total = ramstuff[1].split('MemTotal:')[1].split('\n')[0].strip().split(" ")[0]
 	mem_available = ramstuff[1].split('MemAvailable:')[1].split('\n')[0].strip()
 	cpustuff = commands.getstatusoutput("cat /proc/cpuinfo")
 	vendor_id = cpustuff[1].split('vendor_id')[1].split('\n')[0][2:].strip()
@@ -105,5 +105,4 @@ def maintain_contact(machine_id, headers, SERVER_URL):
 		}
 		# print payload
 		r = requests.post(SERVER_URL+"machine/"+str(machine_id)+"/periodic/", data=payload, headers=headers)
-		print r.content
 		time.sleep(10)

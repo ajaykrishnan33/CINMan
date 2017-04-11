@@ -52,7 +52,6 @@ class MachinePeriodicView(APIView):
         user_info = json.loads(request.data["user_info"])
         machine_info = json.loads(request.data["machine_info"])
 
-
         try:
             with transaction.atomic():
                 m = Machine.objects.select_for_update().get(pk=pk)
@@ -63,7 +62,7 @@ class MachinePeriodicView(APIView):
                 serializer = MachineSerializer(m, machine_info, partial=True)
 
                 if serializer.is_valid():
-                    serializer.save(active=True, last_active_at=timezone.now())
+                    x = serializer.save(active=True, last_active_at=timezone.now())
                 else:
                     print serializer.errors
 
@@ -140,6 +139,7 @@ class LogEntryListView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         obj = serializer.save(user=self.request.user.machineuser_profile)
+
 
 class LogEntryDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)
