@@ -8,12 +8,10 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  		<script type="text/javascript" src="ws4redis.js"></script>
 		<script type="text/javascript" src="home.js"></script>
 		<style type="text/css">
-		    body {
-		  padding: 10px;
-		  background-color: #eee;
-		}
+		   
 
 		.form-signin {
 		  max-width: 330px;
@@ -49,13 +47,26 @@
 		  border-top-left-radius: 0;
 		  border-top-right-radius: 0;
 		}
+		ul {
+		    list-style-type: none;
+		    margin: 0;
+		    padding: 10px;
+		    display: none;
+		    width: 20%;
+		    float: right;
+		    background-color: #777;
+		    height: 100%; /* Full height */
+		    position: fixed; /* Make it stick, even on scroll */
+		    overflow: auto; /* Enable scrolling if the sidenav has too much content */
+		}
 		</style>
 	</head>
 	<body style="background-image: url(images.jpg)">
-		<header >
-    		<h1 style="text-align: center;font-family: 'Revalia', cursive;color:white">CINMan</h1>
-  		</header>
-		<div class="container" id = "cont">
+  		
+		<div class="container" style="width:80%;display: inline-block;" id = "cont">
+				<header >
+		    		<h1 style="text-align: center;font-family: 'Revalia', cursive;color:white">CINMan</h1>
+		  		</header>
 				<button type="button" id="users" class="btn btn-primary" style="display: none;">View Users</button>
 				<button type="button" id="machines" class="btn btn-primary" style="display: none;">View Machines</button>
 				<h2 id="heading" style="padding: 10px;margin-top:0px;text-align: center;font-family: 'Revalia', cursive;color:white">Please Login</h2>
@@ -68,5 +79,7 @@
 					</form>
 			  	</div>
 		</div>
+		<ul id="alertbar">
+		</ul>
 	</body>
 </html>
