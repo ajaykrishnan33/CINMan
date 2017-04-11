@@ -7,37 +7,47 @@ import time
 import json
 import commands
 import requests
+import datetime
+import netifaces as nf
 
-headers = {"Authorization" : "Token 3d7441c3bc2a224b1091c81ec7c152464aadc54c"}
-SERVER_URL = "http://localhost:5000/app/machine/"
+my_ip = nf.ifaddresses("wlan0")[2][0]["addr"]
+
+def one_user(temp):
+	user_details = []
+	for d in temp:
+		if len(d)>0:
+			user_details.append(d)
+	username = user_details[0]
+	pts = user_details[1]
+	timestamp = datetime.datetime.strptime(user_details[2]+" "+user_details[3], "%Y-%m-%d %H:%M")
+	ip_addr = user_details[4].strip()[1:-1]
+
+	if ip_addr == "0:0" or ip_addr == ":0":
+		ip_addr = my_ip
+
+	user = {
+		"username":username,
+		"logged_in_at":timestamp,
+		"pts":pts,
+		"ip_addr":ip_addr
+	}
+	return user
+
+def get_user_info():
+	temp = [d.strip() for d in commands.getstatusoutput("who am i")[1].split(" ")]
+	current_user = one_user(temp)
+	
+	temp_list = commands.getstatusoutput("who")[1].split("\n")
+	all_user_details = []
+	for t in temp_list:
+		t = t.strip()
+		temp = [d.strip() for d in t.split(" ")]
+		all_user_details.append(one_user(temp))
+
+	return current_user, all_user_details
+
 
 def get_system_info():
-	data = []
-	kernel_name = ""
-	node_hostname = ""
-	kernel_release = ""
-	machine_hardware = ""
-	processor = ""
-	hardware_platform = ""
-	operating_system = ""
-	mem_total = ""
-	mem_available  = ""
-	vendor_id = ""
-	model_name = ""
-	cpu_speed = ""
-	cache_size = ""
-	processors = ""
-	cores_per_processor = ""
-	disk_size = ""
-	disk_used = ""
-	disk_available = ""
-	ip_addr = ""
-	mac_addr = ""
-	users = []
-	peripherals_desc = ""
-	softwares = []
-	software_versions = []
-	# try:
 	kernel_name = commands.getstatusoutput("uname -s")[1]
 	node_hostname = commands.getstatusoutput("uname -n")[1]
 	kernel_release = commands.getstatusoutput("uname -r")[1]
@@ -65,7 +75,7 @@ def get_system_info():
 	ns = networkstuff[1].split("wlan0")[1].strip()
 	ip_addr = ns.split("inet addr:")[1].strip().split(" ")[0]
 	mac_addr = ns.split("HWaddr")[1].strip().split(" ")[0]
-	userstuff = commands.getstatusoutput("who -q")
+	# userstuff = commands.getstatusoutput("who -q")
 	# for i in range(0,len(userstuff[1].split('\n'))-1):
 	# 	users.append(userstuff[1].split('\n')[i])
 	# peripherals_desc = commands.getstatusoutput("hwinfo --short")[1]	
@@ -80,19 +90,10 @@ def get_system_info():
 		"harddisk_description" : json.dumps({"size":disk_size, "used":disk_used, "available":disk_available})
 	}
 
-	return payload
+	return 	payload
 
-payload = get_system_info()
-r = requests.get(SERVER_URL+"?mac_address="+payload["mac_address"], headers=headers)
-res = r.json()
-if len(res)==0:
-	r = requests.post(SERVER_URL, data=payload, headers=headers)
-	a = r.json()
-	machine_id = a["id"]
-else:
-	machine_id = res[0]["id"]
-
-while True:
-	payload = get_system_info()
-	r = requests.put(SERVER_URL+str(machine_id)+"/", data=payload, headers=headers)
-	time.sleep(10)
+def maintain_contact(machine_id, headers, SERVER_URL):
+	while True:
+		payload = get_system_info()
+		r = requests.put(SERVER_URL+"machine/"+str(machine_id)+"/", data=payload, headers=headers)
+		time.sleep(10)
