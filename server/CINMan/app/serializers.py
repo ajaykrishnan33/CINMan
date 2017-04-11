@@ -33,3 +33,8 @@ class LogEntrySerializer(serializers.ModelSerializer):
 		model = LogEntry
 		fields = make_all_fields(LogEntry, ("alert",))
 
+class AlertSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Alert
+		fields = make_all_fields(LogEntry)
+

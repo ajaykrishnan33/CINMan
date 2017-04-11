@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.filters import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
 from app.serializers import *
 from app.models import *
 from django.db import transaction
@@ -104,6 +105,19 @@ class MachineUserDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = MachineUser.objects.all()
     serializer_class = MachineUserSerializer
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 80
+
+class AlertListView(generics.ListCreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Alert.objects.all()
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, )
+    filter_class = AlertFilter
+    serializer_class = AlertSerializer
 
 class MachineLoginSessionListView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)

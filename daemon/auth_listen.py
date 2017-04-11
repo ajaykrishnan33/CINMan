@@ -22,7 +22,8 @@ def auth_listener(machineid, headers, SERVER_URL):
 			username = line.split("logname=")[1].split(" ")[0]
 			data = {
 				"event" : "auth_failure",
-				"user" : username
+				"user" : username,
+				"display" : line
 			}
 			text = json.dumps(data)
 			r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp}, headers=headers)
@@ -42,7 +43,8 @@ def auth_listener(machineid, headers, SERVER_URL):
 					"event" : "incorrect_password",
 					"count" : int(count),
 					"pwd" : pwd,
-					"command" : command
+					"command" : command,
+					"display" : line
 				}
 				text = json.dumps(data)
 				r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp}, headers=headers)
@@ -60,7 +62,8 @@ def auth_listener(machineid, headers, SERVER_URL):
 					data = {
 						"event" : "sudo_access",
 						"pwd" : pwd,
-						"command" : command
+						"command" : command,
+						"display" : line
 					}
 					text = json.dumps(data)
 					r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp}, headers=headers)
