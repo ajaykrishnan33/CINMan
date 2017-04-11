@@ -153,6 +153,7 @@ class ActiveLoginSession(models.Model):
     mls = models.OneToOneField(MachineLoginSession, related_name="active_login")
     machine = models.ForeignKey(Machine, related_name="active_login_sessions")
     user = models.ForeignKey('MachineUser', related_name="active_login_sessions")
+    username = models.CharField(max_length=255, null=True, blank=True)
     ip_address = models.CharField(max_length=10, null=True, blank=True)
     login_time = models.DateTimeField(null=True, blank=True)
     logout_time = models.DateTimeField(null=True, blank=True)

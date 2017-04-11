@@ -36,7 +36,7 @@ class MachineListView(generics.ListCreateAPIView):
     queryset = Machine.objects.all()
     filter_backends = (DjangoFilterBackend, )
     filter_class = MachineFilter
-    serializer_class = MachineSerializer
+    serializer_class = MachineListSerializer
 
 class MachineDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -72,7 +72,7 @@ class MachinePeriodicView(APIView):
 
                     mls, created = MachineLoginSession.objects.get_or_create(machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"])
 
-                    als, created = ActiveLoginSession.objects.get_or_create(mls=mls, machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"])                    
+                    als, created = ActiveLoginSession.objects.get_or_create(mls=mls, machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"], defaults={"username":curr_user.username})
 
                 return Response(status=status.HTTP_200_OK)
 
