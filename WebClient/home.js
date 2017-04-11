@@ -31,6 +31,7 @@ $(document).ready(function(){
 	    	$("#well").html("");
 	    	$("#alertbar").css("display", "inline-block");
 	    	$("#heading").text("Machine List");
+	    	$("#alert").hide();
 	    	for(var i=0;i<12;i++)
 	    	{
 	    		$("#alertbar").append("<li style='height:8.3%;padding:5px;text-align:center;border-bottom:2px solid white;color:white'>"+alerts[i]+"</li>");
@@ -294,11 +295,11 @@ $(document).ready(function(){
 			manx = parseInt(logs[mac]["machine"]) ;
 			if(manx===man){
 				if(logs[mac]['severity']<2)
-					$("#logs").append("<p style='color:green'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
+					$("#logs").append("<p style='color:red'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
 				if(logs[mac]['severity']===2)
 					$("#logs").append("<p style='color:yellow'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
 				if(logs[mac]['severity']>2)
-					$("#logs").append("<p style='color:red'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
+					$("#logs").append("<p style='color:green'>"+logs[mac]['timestamp']+" : "+logs[mac]['text']+"</p>");
 			}
 		}
 	});
@@ -321,7 +322,7 @@ $(document).ready(function(){
     }
 
     function on_connected() {
-        ws4redis.send_message('Hello');
+        //ws4redis.send_message('Hello');
     }
 
     function on_disconnected(evt) {
@@ -331,5 +332,25 @@ $(document).ready(function(){
     // receive a message though the websocket from the server
     function receiveMessage(msg) {
         //alert('Message from Websocket: ' + msg);
+        console.log(msg+"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6");
+        $("#alert").alert();
+        $("#alert-text").text(msg);
+        var alertsX = []
+        for(var i=0;i<12;i++){
+        	alertsX.push(alerts[i]);
+        }
+        alerts = [];
+        for(var i=1;i<12;i++){
+        	alerts.push(alertsX[i])
+        }
+        alerts.push(msg);
+        $('#alertbar').html("");
+        for(var i=0;i<12;i++)
+	    	{
+	    		$("#alertbar").append("<li style='height:8.3%;padding:5px;text-align:center;border-bottom:2px solid white;color:white'>"+alerts[i]+"</li>");
+	    	}
+	    $("#alert").fadeTo(10000, 500).slideUp(500, function(){
+           $("#alert").slideUp(500);
+        });
     }
 });

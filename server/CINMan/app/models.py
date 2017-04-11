@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 # Create your models here.
 
 class Machine(models.Model):
@@ -33,6 +35,12 @@ class Machine(models.Model):
 
     def __unicode__(self):
         return self.host_name + "(" + self.ip_address+")"
+
+    def save(self,*args,**kwargs):
+        redis_publisher = RedisPublisher(facility='foobar', broadcast=True)
+        message = RedisMessage("Machine")
+        # and somewhere else
+        redis_publisher.publish_message(message)
 
 class Peripheral(models.Model):
 
@@ -81,6 +89,12 @@ class Alert(models.Model):
 
     def __unicode__(self):
         return self.text
+
+    def save(self,*args,**kwargs):
+        redis_publisher = RedisPublisher(facility='foobar', broadcast=True)
+        message = RedisMessage("Alert:"+self.text)
+        # and somewhere else
+        redis_publisher.publish_message(message)
 
 class LogEntry(models.Model):
     TYPE_CHOICES = (
