@@ -5,11 +5,7 @@ urlpatterns = [
 	url(r'^machine/$', views.MachineListView.as_view()),
 	url(r'^machine/(?P<pk>[0-9]+)/$', views.MachineDetailView.as_view()),
 
-	url(r'^machine/(?P<pk>[0-9]+)/activate/$', views.MachineActivateView.as_view()),
-	url(r'^machine/(?P<pk>[0-9]+)/deactivate/$', views.MachineDeactivateView.as_view()),
-
-	url(r'^machine/(?P<pk>[0-9]+)/login/$', views.MachineLoginView.as_view()),
-	url(r'^machine/(?P<pk>[0-9]+)/logout/$', views.MachineLogoutView.as_view()),
+	url(r'^machine/(?P<pk>[0-9]+)/periodic/$', views.MachinePeriodicView.as_view()),
 
 	url(r'^cinmanuser/$', views.CINManUserListView.as_view()),
 	url(r'^cinmanuser/(?P<pk>[0-9]+)/$', views.CINManUserDetailView.as_view()),

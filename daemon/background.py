@@ -27,9 +27,9 @@ def one_user(temp):
 
 	user = {
 		"username":username,
-		"logged_in_at":timestamp,
+		"logged_in_at":timestamp.isoformat(),
 		"pts":pts,
-		"ip_addr":ip_addr
+		"ip_address":ip_addr
 	}
 	return user
 
@@ -85,6 +85,7 @@ def get_system_info():
 	# peripherals_desc = commands.getstatusoutput("hwinfo --short")[1]	
 
 	payload = {
+		"host_name" : node_hostname,
 		"kernel_version" : kernel_name+kernel_release,
 		"ip_address" : ip_addr,
 		"ram_capacity" : int(mem_total)/1000,
@@ -99,8 +100,10 @@ def get_system_info():
 def maintain_contact(machine_id, headers, SERVER_URL):
 	while True:
 		payload = {
-			"user_info" : get_user_info(),
-			"machine_info" : get_system_info()
+			"user_info" : json.dumps(get_user_info()),
+			"machine_info" : json.dumps(get_system_info())
 		}
+		# print payload
 		r = requests.post(SERVER_URL+"machine/"+str(machine_id)+"/periodic/", data=payload, headers=headers)
+		print r.content
 		time.sleep(10)

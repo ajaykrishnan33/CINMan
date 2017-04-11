@@ -16,6 +16,7 @@ class Machine(models.Model):
     )
 
     ip_address = models.CharField(max_length=20, null=True, blank=True)
+    host_name = models.CharField(max_length=100, null=True, blank=True)
     mac_address = models.CharField(max_length=20, null=True, blank=True)
     address_width = models.IntegerField(choices=ADDRESS_WIDTH_CHOICES, default=1)
     ram_capacity = models.IntegerField(null=True, blank=True); ## in MBs
@@ -28,6 +29,10 @@ class Machine(models.Model):
     os_distro = models.IntegerField(choices=OS_CHOICES, null=True, blank=True)
     kernel_version = models.CharField(max_length=30, null=True, blank=True)
     active = models.BooleanField(default=False)
+    last_active_at = models.DateTimeField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.host_name + "(" + self.ip_address+")"
 
 class Peripheral(models.Model):
 
@@ -40,7 +45,8 @@ class Peripheral(models.Model):
 	machine = models.ForeignKey(Machine, null=False, blank=False, related_name="peripherals")
 	type = models.IntegerField(choices=TYPE_CHOICES)
 	model = models.CharField(max_length=100)
-	description = models.CharField(max_length=200)
+	description = models.CharField(max_length=200)    
+
   
 class Software(models.Model):
     TYPE_CHOICES = (
@@ -52,6 +58,10 @@ class Software(models.Model):
     sudo_needed = models.BooleanField(default=False)
     version = models.CharField(max_length=200)
     name = models.CharField(max_length=300)
+
+    def __unicode__(self):
+        return self.name
+
 
 class SoftwareInstallation(models.Model):
   
@@ -67,6 +77,10 @@ class Alert(models.Model):
     )
     log_entry = models.OneToOneField('LogEntry', null=True, blank=True, related_name="alert")
     alert_type = models.IntegerField(choices=ALERT_NATURE)
+    text = models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.text
 
 class LogEntry(models.Model):
     TYPE_CHOICES = (
@@ -91,6 +105,9 @@ class LogEntry(models.Model):
     text = models.TextField(null=True, blank=True)
     user = models.ForeignKey('MachineUser', null=True, blank=True, related_name="log_entries")
     severity = models.IntegerField(choices=SEVERITY_CHOICES, default=2)
+
+    def __unicode__(self):
+        return self.log_entry_type + "(" + self.machine.host_name + ")"
   
 
 class CINManUser(models.Model): #Admin
@@ -100,19 +117,39 @@ class CINManUser(models.Model): #Admin
     primary_mail = models.CharField(max_length=100, null=True, blank=True)
     secondary_mail = models.CharField(max_length=100, null=True, blank=True)
     mobile_number = models.CharField(max_length=15, null=True, blank=True)
-  
-class MachineLoginSession(models.Model):
-  
+    
+    def __unicode__(self):
+        return self.user.username
+
+class MachineLoginSession(models.Model):  
     machine = models.ForeignKey(Machine, related_name="login_sessions")
     user = models.ForeignKey('MachineUser', related_name="login_sessions")
+    ip_address = models.CharField(max_length=10, null=True, blank=True)
     login_time = models.DateTimeField(null=True, blank=True)
     logout_time = models.DateTimeField(null=True, blank=True)
     data_downloaded = models.IntegerField(null=True, blank=True)
     data_uploaded = models.IntegerField(null=True, blank=True)  
+
+    def __unicode__(self):
+        return self.user.username + "(" + self.machine.host_name + ")"
+
+class ActiveLoginSession(models.Model):  
+    mls = models.OneToOneField(MachineLoginSession, related_name="active_login")
+    machine = models.ForeignKey(Machine, related_name="active_login_sessions")
+    user = models.ForeignKey('MachineUser', related_name="active_login_sessions")
+    ip_address = models.CharField(max_length=10, null=True, blank=True)
+    login_time = models.DateTimeField(null=True, blank=True)
+    logout_time = models.DateTimeField(null=True, blank=True)
+    data_downloaded = models.IntegerField(null=True, blank=True)
+    data_uploaded = models.IntegerField(null=True, blank=True)  
+
+    def __unicode__(self):
+        return self.user.username + "(" + self.machine.host_name + ")"
+
   
 class MachineUser(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
-    user = models.OneToOneField(User, related_name="machineuser_profile")  
+    username = models.CharField(max_length=255, null=True, blank=True)
     last_logged_in_date = models.DateTimeField(null=True, blank=True)
     last_logged_in_machine = models.ForeignKey(Machine, null=True, blank=True, related_name="last_logged_in_users")
     last_failed_login_date = models.DateTimeField(null=True, blank=True)
@@ -120,4 +157,6 @@ class MachineUser(models.Model):
     suspicious_activity_count = models.IntegerField(null=True, blank=True)
     number_of_simultaneous_logins = models.IntegerField(default=0)
     currently_logged = models.BooleanField(default=False)
-  
+    
+    def __unicode__(self):
+        return self.username

@@ -11,7 +11,7 @@ payload = get_system_info()
 r = requests.get(SERVER_URL+"machine/?mac_address="+payload["mac_address"], headers=headers)
 res = r.json()
 if len(res)==0:
-	r = requests.post(SERVER_URL, data=payload, headers=headers)
+	r = requests.post(SERVER_URL+"machine/", data=payload, headers=headers)
 	a = r.json()
 	machine_id = a["id"]
 else:

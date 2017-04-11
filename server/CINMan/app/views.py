@@ -13,6 +13,9 @@ from django.db.models import Max
 from datetime import datetime
 
 from app.filters import *
+from app.tasks import update_active_machines
+
+import json
 
 # Create your views here.
 
@@ -31,77 +34,41 @@ class MachineDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         serializer.save(active=True)
 
-class MachineActivateView(APIView):
+class MachinePeriodicView(APIView):
     def post(self, request, pk, format=None):
         pk = int(pk)
+        user_info = json.loads(request.data["user_info"])
+        machine_info = json.loads(request.data["machine_info"])
+
+
         try:
             with transaction.atomic():
                 m = Machine.objects.select_for_update().get(pk=pk)
-                m.active = True
-                m.save()
+                if m.ip_address!=machine_info["ip_address"]:
+                    a = Alert(alert_type=1, text="IP Address of "+m.host_name+" has been changed.")
+                    a.save()
+
+                serializer = MachineSerializer(m, machine_info, partial=True)
+
+                if serializer.is_valid():
+                    serializer.save(active=True, last_active_at=timezone.now())
+                else:
+                    print serializer.errors
+
+                for currentUser in user_info["all_user_details"]:
+
+                    curr_user, created = MachineUser.objects.get_or_create(username=currentUser["username"], defaults={"name":currentUser["username"]})
+
+                    mls, created = MachineLoginSession.objects.get_or_create(machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"])
+
+                    als, created = ActiveLoginSession.objects.get_or_create(mls=mls, machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"])                    
+
                 return Response(status=status.HTTP_200_OK)
+
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class MachineDeactivateView(APIView):
-    def post(self, request, pk, format=None):
-        pk = int(pk)
-        try:
-            with transaction.atomic():
-                m = Machine.objects.select_for_update().get(pk=pk)
-                m.active = False
-                m.save()
-                return Response(status=status.HTTP_200_OK)
-        except:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class MachineLoginView(APIView):
-    def post(self, request, pk, format=None):
-            pk = int(pk)
-        # try:
-            with transaction.atomic():
-                u = MachineUser.objects.select_for_update().get(username=request.data["user"])
-                m = Machine.objects.get(pk=pk)
-                login_time = datetime.fromtimestamp(float(request.data["login_time"]))
-                mls, created = MachineLoginSession.objects.get_or_create(machine=m, user=u, login_time=login_time)
-
-                if not created:
-                    return Response(status=status.HTTP_200_OK)
-
-                u.currently_logged = True
-                u.last_logged_in_machine = m
-                u.last_logged_in_date = login_time
-                u.number_of_simultaneous_logins += 1
-
-                u.save()
-
-                # if u.number_of_simultaneous_logins>1:
-                #   take action
-
-                return Response(status=status.HTTP_200_OK)
-        # except:
-        #   return Response(status=status.HTTP_400_BAD_REQUEST)
-
-class MachineLogoutView(APIView):
-    def post(self, request, pk, format=None):
-        pk = int(pk)
-        try:
-            with transaction.atomic():
-                u = MachineUser.objects.select_for_update().get(username=request.data["user"])
-                login_time = datetime.fromtimestamp(float(request.data["login_time"]))
-                m = Machine.objects.get(pk=pk)
-                mls = MachineLoginSession.objects.get(machine=m, user=u, login_time=login_time, logout_time=None)
-                mls.logout_time = datetime.fromtimestamp(float(request.data["logout_time"]))
-                mls.save()
-
-                u.number_of_simultaneous_logins -= 1
-                if u.number_of_simultaneous_logins == 0:
-                    u.currently_logged = False
-                u.save()
-
-                return Response(status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class CINManUserListView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
