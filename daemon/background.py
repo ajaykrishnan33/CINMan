@@ -44,8 +44,12 @@ def get_user_info():
 		temp = [d.strip() for d in t.split(" ")]
 		all_user_details.append(one_user(temp))
 
-	return current_user, all_user_details
+	payload = {
+		"current_user" : current_user,
+		"all_user_details": all_user_details
+	}
 
+	return payload
 
 def get_system_info():
 	kernel_name = commands.getstatusoutput("uname -s")[1]
@@ -90,10 +94,13 @@ def get_system_info():
 		"harddisk_description" : json.dumps({"size":disk_size, "used":disk_used, "available":disk_available})
 	}
 
-	return 	payload
+	return payload
 
 def maintain_contact(machine_id, headers, SERVER_URL):
 	while True:
-		payload = get_system_info()
-		r = requests.put(SERVER_URL+"machine/"+str(machine_id)+"/", data=payload, headers=headers)
+		payload = {
+			"user_info" : get_user_info(),
+			"machine_info" : get_system_info()
+		}
+		r = requests.post(SERVER_URL+"machine/"+str(machine_id)+"/periodic/", data=payload, headers=headers)
 		time.sleep(10)
