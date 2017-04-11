@@ -11,10 +11,21 @@ from django.db import transaction
 from django.utils import timezone
 from django.db.models import Max
 from datetime import datetime
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from app.filters import *
 
 # Create your views here.
+
+class DummyView(APIView):
+    def get(self, request, format=None):
+        redis_publisher = RedisPublisher(facility='foobar', broadcast=True)
+        message = RedisMessage('Hello World')
+        # and somewhere else
+        redis_publisher.publish_message(message)
+        return Response(status=status.HTTP_200_OK)
+
 
 class MachineListView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)

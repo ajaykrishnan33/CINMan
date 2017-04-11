@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'ws4redis',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -58,6 +58,8 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'CINMan.urls'
 
+WEBSOCKET_URL = '/ws/'
+
 LOGIN_REDIRECT_URL = 'home'
 
 TEMPLATES = [
@@ -71,12 +73,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.core.context_processors.static',
+                'ws4redis.context_processors.default',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'CINMan.wsgi.application'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 
 
 # Database
