@@ -5,6 +5,7 @@ $(document).ready(function(){
 	var logs = [];
 	var host = "localhost";
 	var port = "8000";
+	var alerts = ["i am 1","i am 2","i am 3","i am 4","i am 5","i am 6","i am 7","i am 8","i am 9","i am 10","i am 11","i am 12","i am 13","i am 14","i am 15","i am 16","i am 17","i am 18","i am 19","i am 20",]
 	$("#login").submit(function(){
   /*function to check userid & password*/
 	      //var $form = form;
@@ -28,7 +29,12 @@ $(document).ready(function(){
 	    	$("#users").show();
 	    	$("#activity").show();
 	    	$("#well").html("");
+	    	$("#alertbar").css("display", "inline-block");
 	    	$("#heading").text("Machine List");
+	    	for(var i=0;i<12;i++)
+	    	{
+	    		$("#alertbar").append("<li style='height:8.3%;padding:5px;text-align:center;border-bottom:2px solid white;color:white'>"+alerts[i]+"</li>");
+	    	}
 	    	   $.ajax
 			  ({
 			    type: "GET",
@@ -296,4 +302,34 @@ $(document).ready(function(){
 			}
 		}
 	});
+
+	var ws4redis = WS4Redis({
+        uri: "ws://"+host+":"+port+"/ws/foobar?subscribe-broadcast&publish-broadcast&echo",
+        connecting: on_connecting,
+        connected: on_connected,
+        receive_message: receiveMessage,
+        disconnected: on_disconnected
+    });
+
+    // attach this function to an event handler on your site
+    function sendMessage() {
+        ws4redis.send_message('A message');
+    }
+
+    function on_connecting() {
+        //alert('Websocket is connecting...');
+    }
+
+    function on_connected() {
+        ws4redis.send_message('Hello');
+    }
+
+    function on_disconnected(evt) {
+        //alert('Websocket was disconnected: ' + JSON.stringify(evt));
+    }
+
+    // receive a message though the websocket from the server
+    function receiveMessage(msg) {
+        //alert('Message from Websocket: ' + msg);
+    }
 });
