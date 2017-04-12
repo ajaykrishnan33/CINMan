@@ -50,5 +50,5 @@ class LogEntrySerializer(serializers.ModelSerializer):
 class AlertSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Alert
-		fields = make_all_fields(LogEntry)
+		fields = make_all_fields(Alert)
 

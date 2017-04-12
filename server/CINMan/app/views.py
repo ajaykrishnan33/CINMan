@@ -137,9 +137,6 @@ class LogEntryListView(generics.ListCreateAPIView):
     filter_class = LogEntryFilter
     serializer_class = LogEntrySerializer
 
-    def perform_create(self, serializer):
-        obj = serializer.save(user=self.request.user.machineuser_profile)
-
 
 class LogEntryDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)

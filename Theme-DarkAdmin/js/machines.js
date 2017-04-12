@@ -139,8 +139,8 @@ $(document).ready(function(){
     // receive a message though the websocket from the server
     function receiveMessage(msg) {
         //alert('Message from Websocket: ' + msg);
-        console.log(msg+"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6");
-        if(mssg=="Machine")
+        console.log(msg);
+        if(msg=="Machine")
         	callback();
         else if(msg.indexOf("Alert:")==0)
         {

@@ -30,7 +30,7 @@ def auth_listener(machineid, headers, SERVER_URL):
 			try:
 				print r.json()
 			except:
-				pass
+				print r.content
 
 		else:
 			x = line.find("incorrect password")
@@ -51,7 +51,7 @@ def auth_listener(machineid, headers, SERVER_URL):
 				try:
 					print r.json()
 				except:
-					pass
+					print r.content
 
 			else:
 				x = line.find("COMMAND")
@@ -70,5 +70,5 @@ def auth_listener(machineid, headers, SERVER_URL):
 					try:
 						print r.json()
 					except:
-						pass
+						print r.content
 

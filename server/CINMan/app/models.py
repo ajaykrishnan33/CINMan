@@ -123,7 +123,7 @@ class LogEntry(models.Model):
     severity = models.IntegerField(choices=SEVERITY_CHOICES, default=2)
 
     def __unicode__(self):
-        return self.log_entry_type + "(" + self.machine.host_name + ")"
+        return str(self.log_entry_type) + "(" + self.machine.host_name + ")"
   
 
 class CINManUser(models.Model): #Admin

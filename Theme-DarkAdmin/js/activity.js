@@ -24,7 +24,7 @@ $(document).ready(function(){
 		$.ajax
 		  ({
 		    type: "GET",
-		    url: "http://"+host+":"+port+"/app/logentry/?machine="+userid+"/",
+		    url: "http://"+host+":"+port+"/app/logentry/?machine="+userid,
 		    dataType: 'json',
 		    async: false,
 		    beforeSend: function (xhr) {

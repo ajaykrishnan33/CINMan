@@ -24,6 +24,6 @@ def usb_listener(machineid, headers, SERVER_URL):
 			data= {"event" : "external usb","vendor" : vendor,"model":model}
 			f.close()
 			notif=json.dumps(data)
-			r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":2, "text":notif, "machine":machineid}, headers=headers)
+			r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":10, "text":notif, "machine":machineid}, headers=headers)
 		time.sleep(delay)
 	
