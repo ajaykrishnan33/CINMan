@@ -36,8 +36,8 @@ $(document).ready(function(){
 	    	{
 	    		$("#alertbar").append("<li style='height:8.3%;padding:5px;text-align:center;border-bottom:2px solid white;color:white'>"+alerts[i]+"</li>");
 	    	}
-	    	   $.ajax
-			  ({
+	    	$.ajax
+			({
 			    type: "GET",
 			    url: "http://"+host+":"+port+"/app/machine/",
 			    dataType: 'json',
@@ -58,8 +58,8 @@ $(document).ready(function(){
 			    	}
 			    }
 			});
-			  $.ajax
-				  ({
+			$.ajax
+			({
 				    type: "GET",
 				    url: "http://"+host+":"+port+"/app/machineuser/",
 				    dataType: 'json',
@@ -74,7 +74,7 @@ $(document).ready(function(){
 				    		users.push(response[user]);
 				    		}		    		
 				    }
-				});
+			});
 	    	
 	    	  	},
 	    	  	error:function(response){
