@@ -90,8 +90,8 @@ $(document).ready(function(){
 		    success: function (response){
 		    	console.log(response);
 		    	//fa-eercast
-		    	$("#numalerts").text(response["count"]);
-			    for(var i=0;i<response["count"];i++){
+		    	$("#numalerts").text(Math.min(response["count"],10));
+			    for(var i=0;i<Math.min(response["count"],10);i++){
 			    	alerts.push(response["results"][i]["text"]);
 					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+'</span></a></li><li class="divider"></li>');				    	
 			    }
