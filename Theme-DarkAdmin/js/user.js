@@ -32,6 +32,7 @@ $(document).ready(function(){
 
 	function callback(){
 		$('#news-list').html("");
+        visits = [];
 
 		$.ajax
 		  ({
@@ -43,15 +44,18 @@ $(document).ready(function(){
 			    xhr.setRequestHeader ("Authorization", "Token " + authToken);
 			},
 		    success: function (response){
-		    	//console.log(response);
+		    	console.log(response);
 		    	//fa-eercast
 		    	if(response["currently_logged"])
 			    	$("#name").html(response["username"]+"<small><span style='margin:3px' class='label label-success'>Online</span></small>");
 			    else
 			    	$("#name").html(response["username"]+" <small><span style='margin:3px' class='label label-danger'>Offline</span></small>");
 			    for(var i=0;i<response["active_login_sessions"].length;i++)
-			    	$("#news-list").append("<li><i class='fa fa-desktop fa-3x pull-left'></i><div class='news-item-info'><div class='name'><a href='#'>"+response["active_login_sessions"][i]+"</a></div><div class='position'>"+response["active_login_sessions"][i]+"</div><div class='time'>"+response["last_logged_in_date"]+"</div></div></li>");
-		    	visits = response["login_sessions"];
+                {
+			    	$("#news-list").append("<li><i class='fa fa-desktop fa-3x pull-left'></i><div class='news-item-info'><div class='name'><a href='#'>"+response["active_login_sessions"][i]["ip_address"]+"</a></div><div class='position'>"+response["active_login_sessions"][i]["username"]+"</div><div class='time'>"+response["active_login_sessions"][i]["login_time"]+"</div></div></li>");
+                    //visits.push(response["active_login_sessions"][i]["ip_address"]);
+                }
+		    	
 		    }
 		});
 
