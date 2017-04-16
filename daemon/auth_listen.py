@@ -1,15 +1,9 @@
 import subprocess
 import requests
 # import netifaces as ni
+import commands
 import datetime
 import json
-
-# machineid = 1
-# ipaddr = ni.ifaddresses("wlan0")[2][0]['addr']
-
-# headers = {"Authorization" : "Token 3d7441c3bc2a224b1091c81ec7c152464aadc54c"}
-
-# SERVER_URL = "http://10.21.187.123:5000/app/logentry/"
 
 def auth_listener(machineid, headers, SERVER_URL):
 
@@ -18,8 +12,8 @@ def auth_listener(machineid, headers, SERVER_URL):
 	for line in iter(p.stdout.readline, b''):
 		x = line.find("authentication failure")
 		if x >= 0 and line.find("sudo"):
-			timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[1:3]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
-			username = line.split("logname=")[1].split(" ")[0]
+			timestamp = datetime.datetime.now().isoformat()
+			username = commands.getstatusoutput("whoami")[1]
 			data = {
 				"event" : "auth_failure",
 				"user" : username,
@@ -37,8 +31,8 @@ def auth_listener(machineid, headers, SERVER_URL):
 			if x >= 0:
 				y = line.split(" incorrect password")[0]
 				count = y.split(" ")[-1]
-				username = y.split(" ")[-3]
-				timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[1:3]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
+				username = commands.getstatusoutput("whoami")[1]
+				timestamp = datetime.datetime.now().isoformat()
 				command = line[line.find("COMMAND=") + 8:-1]
 				pwd = line[line.find("PWD=") + 4:-1].split(" ")[0]
 				data = {
@@ -58,9 +52,8 @@ def auth_listener(machineid, headers, SERVER_URL):
 			else:
 				x = line.find("COMMAND")
 				if x >= 0:
-					username = line.split("sudo:")[1].strip().split(" ")[0]
-					print username
-					timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[2:4]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
+					username = commands.getstatusoutput("whoami")[1]
+					timestamp = datetime.datetime.now().isoformat()
 					command = line[line.find("COMMAND=") + 8:-1]
 					pwd = line[line.find("PWD=") + 4:-1].split(" ")[0]
 					data = {
