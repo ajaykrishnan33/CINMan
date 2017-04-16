@@ -36,8 +36,9 @@ def one_user(temp):
 	return user
 
 def get_user_info():
-	temp = [d.strip() for d in commands.getstatusoutput("who am i")[1].split(" ")]
-	current_user = one_user(temp)
+	current_user = {
+		"username" : commands.getstatusoutput("whoami")[1]
+	}
 	
 	temp_list = commands.getstatusoutput("who")[1].split("\n")
 	all_user_details = []
