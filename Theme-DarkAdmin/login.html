@@ -48,8 +48,20 @@
                             <label>Password</label>
                             <input class="form-control" id="pswrd" type="password" style="width:40%;color:black" placeholder="Password">
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit Button</button>
-                        <button type="reset" class="btn btn-default">Reset Button</button>
+
+                        <div id="hostdiv" style="display: none;" class="form-group">
+                            <label>Host</label>
+                            <input class="form-control" id="host" style="width:40%;color:black" placeholder="Host">
+                        </div>
+
+                        <div id="portdiv" class="form-group" style="display: none;">
+                            <label>Port</label>
+                            <input class="form-control" id="port" style="width:40%;color:black" placeholder="Port">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="reset" class="btn btn-default">Reset</button>
+                        <button id="cache" class="btn btn-default">Clear Cache</button>
 
                     </form>
 
