@@ -5,3 +5,4 @@
 **/dump.rdb
 **/db.sqlite3
 **/migrations/**
+daemon/config.txt

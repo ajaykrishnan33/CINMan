@@ -101,7 +101,7 @@ def get_system_info():
 		"kernel_version" : kernel_name+kernel_release,
 		"ip_address" : ip_addr,
 		"ram_capacity" : int(mem_total)/1000,
-		"ram_description": json.dumps({"total":mem_total, "available":mem_available, "free":mem_free})
+		"ram_description": json.dumps({"total":mem_total, "available":mem_available, "free":mem_free}),
 		"mac_address" : mac_addr,
 		"cpu_speed" : float(cpu_speed[0:-3])/1000,
 		"harddisk_capacity": float(disk_size),

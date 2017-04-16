@@ -4,8 +4,13 @@ from background import get_system_info, maintain_contact
 from auth_listen import auth_listener
 # from usb_detect import usb_listener
 
-headers = {"Authorization" : "Token 3d7441c3bc2a224b1091c81ec7c152464aadc54c"}
-SERVER_URL = "http://localhost:8000/app/"
+# headers = {"Authorization" : "Token 3d7441c3bc2a224b1091c81ec7c152464aadc54c"}
+# SERVER_URL = "http://localhost:8000/app/"
+
+f = open("config.txt", "r");
+config = f.read().split("\n");
+headers = {"Authorization" : "Token "+config[0]}
+SERVER_URL = config[1]
 
 payload = get_system_info()
 r = requests.get(SERVER_URL+"machine/?mac_address="+payload["mac_address"], headers=headers)
