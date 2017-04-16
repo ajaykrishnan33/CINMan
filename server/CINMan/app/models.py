@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
+import json
 # Create your models here.
 
 class Machine(models.Model):
@@ -125,6 +126,12 @@ class LogEntry(models.Model):
         redis_publisher = RedisPublisher(facility='foobar', broadcast=True)
         message = RedisMessage("Log")
         # and somewhere else
+        a = json.loads(text)
+        if a["event"]=="usb_connect" or a["event"]=="package_install" or a["event"]=="package_remove":
+            alert = Alert(log_entry=self,alert_type=2,machines=self.machine,user=self.user,text=a["display"])
+        elif a["event"]=="usb_disconnect" or a["event"]=="auth_failure" or a["event"]=="sudo_access" or a["event"]=="incorrect_password":
+            alert = Alert(log_entry=self,alert_type=1,machines=self.machine,user=self.user,text=a["display"])
+        alert.save()
         redis_publisher.publish_message(message)
         super(LogEntry, self).save(*args, **kwargs)
   
