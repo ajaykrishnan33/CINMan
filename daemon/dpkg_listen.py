@@ -28,7 +28,6 @@ def dpkg_listener(machineid, headers, SERVER_URL):
 			line = line.strip()
 			x = line.find(" remove ")
 			if x>=0 :
-				print line
 				package_name = line.split(" remove ")[1].strip()
 				timestamp = datetime.datetime.now().isoformat()
 				username = commands.getstatusoutput("whoami")[1]
