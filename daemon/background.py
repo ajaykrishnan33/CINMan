@@ -30,7 +30,7 @@ def one_user(temp):
 	user = {
 		"username":username,
 		"logged_in_at":timestamp.isoformat(),
-		"pts":pts,
+		"tty":pts,
 		"ip_address":ip_addr
 	}
 	return user
@@ -121,4 +121,10 @@ def maintain_contact(machine_id, headers, SERVER_URL):
 		}
 		# print payload
 		r = requests.post(SERVER_URL+"machine/"+str(machine_id)+"/periodic/", data=payload, headers=headers)
+
+		try:
+			r.json()
+		except:
+			print r.content
+
 		time.sleep(10)

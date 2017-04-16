@@ -18,6 +18,10 @@ def update_active_machines():
 			for als in m.active_login_sessions.all():
 				als.mls.logout_time = curr_time
 				als.mls.save(update_fields=['logout_time'])
+				if als.user.active_login_sessions.filter(mls__logout_time=None).count()==0:
+					als.user.currently_logged = False
+					als.user.save(update_fields=['currently_logged'])
+
 			m.active_login_sessions.all().delete()
 			m.save(update_fields=['active'])
 

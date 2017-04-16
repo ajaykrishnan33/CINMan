@@ -70,13 +70,26 @@ class MachinePeriodicView(APIView):
                 else:
                     print serializer.errors
 
+                userhash = set()
+
                 for currentUser in user_info["all_user_details"]:
 
                     curr_user, created = MachineUser.objects.get_or_create(username=currentUser["username"], defaults={"name":currentUser["username"]})
 
-                    mls, created = MachineLoginSession.objects.get_or_create(machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"])
+                    mls, created = MachineLoginSession.objects.get_or_create(machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"], tty=currentUser["tty"])
 
-                    als, created = ActiveLoginSession.objects.get_or_create(mls=mls, machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"], defaults={"username":curr_user.username})
+                    als, created = ActiveLoginSession.objects.get_or_create(mls=mls, machine=m, user=curr_user, login_time=currentUser["logged_in_at"], ip_address=currentUser["ip_address"], tty=currentUser["tty"], defaults={"username":curr_user.username})
+
+                    userhash.add(curr_user.username+"|"+str(mls.login_time)+"|"+als.tty)
+
+                for als in ActiveLoginSession.objects.filter(machine=m):
+                    if (als.user.username+"|"+str(als.mls.login_time)+"|"+als.tty) not in userhash:
+                        als.mls.logout_time = timezone.now()
+                        currUser = als.user
+                        als.delete()
+                        if currUser.active_login_sessions.count()==0:
+                            currUser.currently_logged = False
+                            currUser.save(update_fields=['currently_logged'])
 
                 return Response(status=status.HTTP_200_OK)
 

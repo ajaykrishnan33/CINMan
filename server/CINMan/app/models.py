@@ -136,7 +136,7 @@ class LogEntry(models.Model):
                 alert = Alert(alert_type=1,user=self.user,text=a["display"])
             alert.save()
             alert.machines.add(self.machine)
-            
+
         redis_publisher.publish_message(message)
   
 
@@ -157,6 +157,7 @@ class MachineLoginSession(models.Model):
     ip_address = models.CharField(max_length=10, null=True, blank=True)
     login_time = models.DateTimeField(null=True, blank=True)
     logout_time = models.DateTimeField(null=True, blank=True)
+    tty = models.CharField(max_length=300)
     data_downloaded = models.IntegerField(null=True, blank=True)
     data_uploaded = models.IntegerField(null=True, blank=True)  
 
@@ -171,6 +172,7 @@ class ActiveLoginSession(models.Model):
     ip_address = models.CharField(max_length=10, null=True, blank=True)
     login_time = models.DateTimeField(null=True, blank=True)
     logout_time = models.DateTimeField(null=True, blank=True)
+    tty = models.CharField(max_length=300)
     data_downloaded = models.IntegerField(null=True, blank=True)
     data_uploaded = models.IntegerField(null=True, blank=True)  
 
