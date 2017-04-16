@@ -34,12 +34,12 @@ $(document).ready(function(){
 		    	console.log(response);
 		    	//fa-eercast
 			    for(var i=0;i<response.length;i++){
-			    	if(response["log_entry_type"]==1)
-			    		$("#news-list1").append("<li><div class='news-item-info'><div class='name'><a href='#'>"+response[i]["text"]+"</a></div><div class='position'></div><div class='time'>"+response[i]["timestamp"]+"</div></div></li>");
-		    		else if(response["log_entry_type"]==10)
-		    			$("#news-list2").append("<li><div class='news-item-info'><div class='name'><a href='#'>"+response[i]["text"]+"</a></div><div class='position'></div><div class='time'>"+response[i]["timestamp"]+"</div></div></li>");
+			    	if(parseInt(response[i]["log_entry_type"])==1)
+			    		$("#news-list1").append("<li style='margin-bottom: 15px;'><div class='news-item-info'><div class='name'><a href='#'>"+JSON.parse(response[i]["text"])["display"]+"</a></div><div class='position'></div><div class='time'>"+response[i]["timestamp"]+"</div></div></li>");
+		    		else if(response[i]["log_entry_type"]==10)
+		    			$("#news-list2").append("<li style='margin-bottom: 15px;'><div class='news-item-info'><div class='name'><a href='#'>"+JSON.parse(response[i]["text"])["display"]+"</a></div><div class='position'></div><div class='time'>"+response[i]["timestamp"]+"</div></div></li>");
 		    		else
-		    			$("#news-list3").append("<li><div class='news-item-info'><div class='name'><a href='#'>"+response[i]["text"]+"</a></div><div class='position'></div><div class='time'>"+response[i]["timestamp"]+"</div></div></li>");
+		    			$("#news-list3").append("<li style='margin-bottom: 15px;'><div class='news-item-info'><div class='name'><a href='#'>"+JSON.parse(response[i]["text"])["display"]+"</a></div><div class='position'></div><div class='time'>"+response[i]["timestamp"]+"</div></div></li>");
 		    	}
 		    }
 		});
