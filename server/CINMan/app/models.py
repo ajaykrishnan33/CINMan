@@ -130,10 +130,21 @@ class LogEntry(models.Model):
         # and somewhere else
         if init_pk is None:
             a = json.loads(self.text)
-            if a["event"]=="usb_connect" or a["event"]=="package_install" or a["event"]=="package_remove":
-                alert = Alert(alert_type=2,user=self.user,text=a["display"])
-            elif a["event"]=="usb_disconnect" or a["event"]=="auth_failure" or a["event"]=="sudo_access" or a["event"]=="incorrect_password":
-                alert = Alert(alert_type=1,user=self.user,text=a["display"])
+            if a["event"]=="usb_connect":
+                alert = Alert(alert_type=2,user=self.user,text="USB Connected")
+            elif a["event"]=="package_install":
+                alert = Alert(alert_type=1,user=self.user,text="Package Installed")
+            elif a["event"]=="package_remove":
+                alert = Alert(alert_type=1,user=self.user,text="Package Removed")
+            elif a["event"]=="usb_disconnect":
+                alert = Alert(alert_type=1,user=self.user,text="USB Disconnected")
+            elif a["event"]=="auth_failure":
+                alert = Alert(alert_type=1,user=self.user,text="Failed Authorization")
+            elif a["event"]=="sudo_access":
+                alert = Alert(alert_type=1,user=self.user,text="SUDO Access Attempted")
+            elif a["event"]=="incorrect_password":
+                alert = Alert(alert_type=1,user=self.user,text="Incorrect Password")
+
             alert.save()
             alert.machines.add(self.machine)
             

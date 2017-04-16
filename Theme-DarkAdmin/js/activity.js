@@ -63,7 +63,7 @@ $(document).ready(function(){
 		    	$("#numalerts").text(response["count"]);
 			    for(var i=0;i<response["count"];i++){
 			    	alerts.push(response["results"][i]["text"]);
-					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"].substr(0,7)+'...</span></a></li><li class="divider"></li>');				    	
+					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+'</span></a></li><li class="divider"></li>');				    	
 			    }
 			    $("#alerts-drp").append('<li><a href="alerts.html">Go to Alerts</a></li>');
 			}

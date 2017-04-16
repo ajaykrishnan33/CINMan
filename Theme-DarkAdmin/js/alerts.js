@@ -33,7 +33,7 @@ $(document).ready(function(){
 		    	$("#numalerts").text(response["count"]);
 			    for(var i=0;i<response["count"];i++){
 			    	alerts.push(response["results"][i]["text"]);
-					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"].substr(0,7)+'...</span></a></li><li class="divider"></li>');
+					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+'</span></a></li><li class="divider"></li>');
 					$("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='#'>"+response["results"][i]["text"]+"</a></div><div class='position'></div><div class='time'></div></div></li>");
 			    }
 			    $("#alerts-drp").append('<li><a href="alerts.html">Go to Alerts</a></li>');
