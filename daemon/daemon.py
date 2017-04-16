@@ -3,10 +3,7 @@ import requests
 from background import get_system_info, maintain_contact
 from auth_listen import auth_listener
 from dpkg_listen import dpkg_listener
-# from usb_detect import usb_listener
-
-# headers = {"Authorization" : "Token 3d7441c3bc2a224b1091c81ec7c152464aadc54c"}
-# SERVER_URL = "http://localhost:8000/app/"
+from peri_listen import peri_listener
 
 f = open("config.txt", "r");
 config = f.read().split("\n");
@@ -26,6 +23,7 @@ else:
 thread.start_new_thread(maintain_contact, (machine_id, headers, SERVER_URL))
 thread.start_new_thread(auth_listener, (machine_id, headers, SERVER_URL))
 thread.start_new_thread(dpkg_listener, (machine_id, headers, SERVER_URL))
+thread.start_new_thread(peri_listener, (machine_id, headers, SERVER_URL))
 
 while True:
 	pass

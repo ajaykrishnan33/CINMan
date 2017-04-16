@@ -2,8 +2,8 @@ $(document).ready(function(){
 	var authToken = localStorage.getItem("authToken");
 	console.log(authToken);
 	$("#usernaam").text(localStorage.getItem("username"));
-	var host = "localhost";
-	var port = "8000";
+		var host = localStorage.getItem("host");
+	var port = localStorage.getItem("port");
 	var userid = localStorage.getItem("last-machine-id");
 	var performance = [12, 43, 34, 22, 12, 33, 4, 17, 22, 34, 54, 67],
                 visits1 = [],
@@ -67,8 +67,12 @@ $(document).ready(function(){
 		    	//visits1,visits2 = [parseInt(response["harddisk_description"]["available"]),parseInt(response["harddisk_description"]["used"])];
 		    	var x = parseInt(response["harddisk_description"].split("\", \"used\": ")[0].split("{\"available\": \"")[1]);
 		    	var y = parseInt(response["harddisk_description"].split("\", \"used\": ")[1].split(",")[0].split("\"")[1]);
-		    	visits1 = [x,y];
-		    	visits2 = [x,y];
+		    	var x1 = parseInt(JSON.parse(response["harddisk_description"])["available"]);
+		    	var y1 = parseInt(JSON.parse(response["harddisk_description"])["used"]);
+		    	var x2 = parseInt(JSON.parse(response["ram_description"])["available"]);
+		    	var y2 = parseInt(JSON.parse(response["ram_description"])["free"]);
+		    	visits1 = [x1,y1];
+		    	visits2 = [x2,y2];
 		    	traffic = [
 		    	{
 		    		Parameter:"IP Address:",Value:response["ip_address"]
