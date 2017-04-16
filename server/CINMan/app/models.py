@@ -126,6 +126,13 @@ class LogEntry(models.Model):
 
     def __unicode__(self):
         return str(self.log_entry_type) + "(" + self.machine.host_name + ")"
+
+    def save(self,*args,**kwargs):
+        redis_publisher = RedisPublisher(facility='foobar', broadcast=True)
+        message = RedisMessage("Log")
+        # and somewhere else
+        redis_publisher.publish_message(message)
+        super(LogEntry, self).save(*args, **kwargs)
   
 
 class CINManUser(models.Model): #Admin
