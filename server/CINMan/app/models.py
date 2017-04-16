@@ -11,12 +11,6 @@ class Machine(models.Model):
         (2, '32-bit')
     )
 
-    OS_CHOICES = (
-        (1, 'Ubuntu'),
-        (2, 'RedHat'),
-        ## add more here
-    )
-
     ip_address = models.CharField(max_length=20, null=True, blank=True)
     host_name = models.CharField(max_length=100, null=True, blank=True)
     mac_address = models.CharField(max_length=20, null=True, blank=True)
@@ -28,7 +22,7 @@ class Machine(models.Model):
     harddisk_capacity = models.FloatField(null=True, blank=True); ## in GBs
     harddisk_description = models.TextField(null=True, blank=True)
     motherboard_description = models.TextField(null=True, blank=True)
-    os_distro = models.IntegerField(choices=OS_CHOICES, null=True, blank=True)
+    os_distro = models.TextField(null=True, blank=True)
     kernel_version = models.CharField(max_length=30, null=True, blank=True)
     active = models.BooleanField(default=False)
     last_active_at = models.DateTimeField(null=True, blank=True)

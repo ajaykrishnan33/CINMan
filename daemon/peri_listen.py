@@ -1,21 +1,18 @@
 import subprocess
 import requests
-# import netifaces as ni
 import datetime
 import json
 import commands
 
-#def peri_listener(machineid, headers, SERVER_URL):
+def peri_listener(machineid, headers, SERVER_URL):
+	p = subprocess.Popen(['tail', '-n', '0', '-f', '/var/log/kern.log'], stdout=subprocess.PIPE)
+	flag = False
+	product = ""
+	manufac = ""
+	serial = ""
 
-p = subprocess.Popen(['tail', '-n', '0', '-f', '/var/log/kern.log'], stdout=subprocess.PIPE)
-flag = False
-product = ""
-manufac = ""
-serial = ""
-
-def auth_listener(machineid, headers, SERVER_URL):
 	for line in iter(p.stdout.readline, b''):
-		timestamp = datetime.now()
+		timestamp = datetime.datetime.now()
 		x = line.find("New USB device found")
 		username = commands.getstatusoutput("whoami")[1]
 		if x >= 0:

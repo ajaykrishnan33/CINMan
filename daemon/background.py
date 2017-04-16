@@ -60,10 +60,11 @@ def get_system_info():
 	machine_hardware = commands.getstatusoutput("uname -m")[1]
 	processor = commands.getstatusoutput("uname -p")[1]
 	hardware_platform = commands.getstatusoutput("uname -i")[1]
-	operating_system = commands.getstatusoutput("uname -o")[1]
+
 	ramstuff = commands.getstatusoutput("cat /proc/meminfo")[1]
 	ramstuff = ramstuff.split("\n")
 
+	os_distro = commands.getstatusoutput("cat /etc/*-release")[1].strip().split("DISTRIB_DESCRIPTION=")[1].split("\n")[0][1:-1].strip()
 
 	mem_total = ramstuff[0].split(":")[1].strip().split(" ")[0] ## total
 	mem_available = ramstuff[2].split(":")[1].strip().split(" ")[0] ## available
@@ -98,6 +99,7 @@ def get_system_info():
 
 	payload = {
 		"host_name" : node_hostname,
+		"os_distro" : os_distro,
 		"kernel_version" : kernel_name+kernel_release,
 		"ip_address" : ip_addr,
 		"ram_capacity" : int(mem_total)/1000,
