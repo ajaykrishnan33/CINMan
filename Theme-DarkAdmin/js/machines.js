@@ -2,8 +2,8 @@ $(document).ready(function(){
 	var authToken = localStorage.getItem("authToken");
 	console.log(authToken);
 	$("#usernaam").text(localStorage.getItem("username"));
-	var host = "localhost";
-	var port = "8000";
+		var host = localStorage.getItem("host");
+	var port = localStorage.getItem("port");
 
 	var alerts = [];
 
@@ -140,7 +140,7 @@ $(document).ready(function(){
     function receiveMessage(msg) {
         //alert('Message from Websocket: ' + msg);
         console.log(msg);
-        if(msg=="Machine")
+        if(msg.indexOf("Machine")==0)
         	callback();
         else if(msg.indexOf("Alert:")==0)
         {

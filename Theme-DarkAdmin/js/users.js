@@ -2,8 +2,8 @@ $(document).ready(function(){
 	var authToken = localStorage.getItem("authToken");
 	console.log(authToken);
 	$("#usernaam").text(localStorage.getItem("username"));
-	var host = "localhost";
-	var port = "8000";
+	var host = localStorage.getItem("host");
+	var port = localStorage.getItem("port");
 
 	var alerts = [];
 

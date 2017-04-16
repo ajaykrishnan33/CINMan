@@ -1,0 +1,2 @@
+NAME="sdb" HCTL="4:0:0:0" TYPE="disk" VENDOR="SanDisk " MODEL="Cruzer Blade    " REV="1.27" TRAN="usb"
+NAME="sdc" HCTL="5:0:0:0" TYPE="disk" VENDOR="JetFlash" MODEL="Transcend 4GB   " REV="1100" TRAN="usb"

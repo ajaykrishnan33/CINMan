@@ -1,7 +1,9 @@
 $(document).ready(function(){
 
-	var host = "localhost";
+	var host = "192.168.0.102";
+	localStorage.setItem("host",host);
 	var port = "8000";
+	localStorage.setItem("port",port);
 	var authToken = "";
 
 	$('#f1').submit(function(e)

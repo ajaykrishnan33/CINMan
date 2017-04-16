@@ -2,8 +2,8 @@ $(document).ready(function(){
 	var authToken = localStorage.getItem("authToken");
 	console.log(authToken);
 	$("#usernaam").text(localStorage.getItem("username"));
-	var host = "localhost";
-	var port = "8000";
+	   var host = localStorage.getItem("host");
+    var port = localStorage.getItem("port");
 	var userid = localStorage.getItem("last-machine-id");
 	var performance = [12, 43, 34, 22, 12, 33, 4, 17, 22, 34, 54, 67],
                 visits1 = [],
