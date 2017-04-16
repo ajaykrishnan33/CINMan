@@ -1,8 +1,8 @@
 *.pyc
-**/celerybeat-schedule
-**/celerybeat.pid
-**/nohup.out
-**/dump.rdb
-**/db.sqlite3
-**/migrations/**
+server/CINMan/celerybeat-schedule
+server/CINMan/celerybeat.pid
+server/CINMan/nohup.out
+server/CINMan/dump.rdb
+server/CINMan/db.sqlite3
+server/CINMan/app/migrations/**
 daemon/config.txt
