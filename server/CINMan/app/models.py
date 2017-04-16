@@ -125,15 +125,19 @@ class LogEntry(models.Model):
     def save(self,*args,**kwargs):
         redis_publisher = RedisPublisher(facility='foobar', broadcast=True)
         message = RedisMessage("Log")
-        # and somewhere else
-        a = json.loads(text)
-        if a["event"]=="usb_connect" or a["event"]=="package_install" or a["event"]=="package_remove":
-            alert = Alert(log_entry=self,alert_type=2,machines=self.machine,user=self.user,text=a["display"])
-        elif a["event"]=="usb_disconnect" or a["event"]=="auth_failure" or a["event"]=="sudo_access" or a["event"]=="incorrect_password":
-            alert = Alert(log_entry=self,alert_type=1,machines=self.machine,user=self.user,text=a["display"])
-        alert.save()
-        redis_publisher.publish_message(message)
+        init_pk = self.pk
         super(LogEntry, self).save(*args, **kwargs)
+        # and somewhere else
+        if init_pk is None:
+            a = json.loads(self.text)
+            if a["event"]=="usb_connect" or a["event"]=="package_install" or a["event"]=="package_remove":
+                alert = Alert(alert_type=2,user=self.user,text=a["display"])
+            elif a["event"]=="usb_disconnect" or a["event"]=="auth_failure" or a["event"]=="sudo_access" or a["event"]=="incorrect_password":
+                alert = Alert(alert_type=1,user=self.user,text=a["display"])
+            alert.save()
+            alert.machines.add(self.machine)
+            
+        redis_publisher.publish_message(message)
   
 
 class CINManUser(models.Model): #Admin
