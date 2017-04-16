@@ -10,7 +10,9 @@ import requests
 import datetime
 import netifaces as nf
 
-my_ip = nf.ifaddresses("wlan0")[2][0]["addr"]
+default_interface = commands.getstatusoutput("route | grep '^default' | grep -o '[^ ]*$'")[1]
+
+my_ip = nf.ifaddresses(default_interface)[2][0]["addr"]
 
 def one_user(temp):
 	user_details = []
@@ -59,9 +61,14 @@ def get_system_info():
 	processor = commands.getstatusoutput("uname -p")[1]
 	hardware_platform = commands.getstatusoutput("uname -i")[1]
 	operating_system = commands.getstatusoutput("uname -o")[1]
-	ramstuff = commands.getstatusoutput("cat /proc/meminfo")
-	mem_total = ramstuff[1].split('MemTotal:')[1].split('\n')[0].strip().split(" ")[0]
-	mem_available = ramstuff[1].split('MemAvailable:')[1].split('\n')[0].strip()
+	ramstuff = commands.getstatusoutput("cat /proc/meminfo")[1]
+	ramstuff = ramstuff.split("\n")
+
+
+	mem_total = ramstuff[0].split(":")[1].strip().split(" ")[0] ## total
+	mem_available = ramstuff[2].split(":")[1].strip().split(" ")[0] ## available
+	mem_free = ramstuff[1].split(":")[1].strip().split(" ")[0] ## free
+
 	cpustuff = commands.getstatusoutput("cat /proc/cpuinfo")
 	vendor_id = cpustuff[1].split('vendor_id')[1].split('\n')[0][2:].strip()
 	model_name = cpustuff[1].split('model name')[1].split('\n')[0][2:].strip()
@@ -75,10 +82,15 @@ def get_system_info():
 	disk_size = diskstuff[0]
 	disk_used = diskstuff[1]
 	disk_available = diskstuff[2]
-	networkstuff = commands.getstatusoutput("/sbin/ifconfig")
-	ns = networkstuff[1].split("wlan0")[1].strip()
-	ip_addr = ns.split("inet addr:")[1].strip().split(" ")[0]
-	mac_addr = ns.split("HWaddr")[1].strip().split(" ")[0]
+	# networkstuff = commands.getstatusoutput("/sbin/ifconfig")
+	# ns = networkstuff[1].split("wlan0")[1].strip()
+	# ip_addr = ns.split("inet addr:")[1].strip().split(" ")[0]
+	# mac_addr = ns.split("HWaddr")[1].strip().split(" ")[0]
+
+	default_interface = commands.getstatusoutput("route | grep '^default' | grep -o '[^ ]*$'")[1]
+	ip_addr = nf.ifaddresses(default_interface)[2][0]["addr"]
+	mac_addr = nf.ifaddresses(default_interface)[nf.AF_LINK][0]["addr"]
+
 	# userstuff = commands.getstatusoutput("who -q")
 	# for i in range(0,len(userstuff[1].split('\n'))-1):
 	# 	users.append(userstuff[1].split('\n')[i])
@@ -89,6 +101,7 @@ def get_system_info():
 		"kernel_version" : kernel_name+kernel_release,
 		"ip_address" : ip_addr,
 		"ram_capacity" : int(mem_total)/1000,
+		"ram_description": json.dumps({"total":mem_total, "available":mem_available, "free":mem_free})
 		"mac_address" : mac_addr,
 		"cpu_speed" : float(cpu_speed[0:-3])/1000,
 		"harddisk_capacity": float(disk_size),

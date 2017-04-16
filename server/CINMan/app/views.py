@@ -54,10 +54,14 @@ class MachinePeriodicView(APIView):
 
         try:
             with transaction.atomic():
+                currentUser = user_info["current_user"]
+                curr_user, created = MachineUser.objects.get_or_create(username=currentUser["username"], defaults={"name":currentUser["username"]})
+
                 m = Machine.objects.select_for_update().get(pk=pk)
                 if m.ip_address!=machine_info["ip_address"]:
-                    a = Alert(alert_type=1, text="IP Address of "+m.host_name+" has been changed.")
+                    a = Alert(alert_type=1, user=curr_user, text="IP Address of "+m.host_name+" has been changed.")
                     a.save()
+                    a.machines.add(m)
 
                 serializer = MachineSerializer(m, machine_info, partial=True)
 
@@ -137,6 +141,10 @@ class LogEntryListView(generics.ListCreateAPIView):
     filter_class = LogEntryFilter
     serializer_class = LogEntrySerializer
 
+    def perform_create(self, serializer):
+        obj = serializer.save()
+        obj.user = MachineUser.objects.get(username=self.request.data["username"])
+        obj.save()
 
 class LogEntryDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)

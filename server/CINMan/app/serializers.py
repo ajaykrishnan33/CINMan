@@ -35,7 +35,11 @@ class CINManUserSerializer(serializers.ModelSerializer):
 class MachineUserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = MachineUser
-		fields = make_all_fields(MachineUser)
+		fields = (
+			"id", "name", "username", "last_logged_in_date", "last_logged_in_machine", 
+			"last_failed_login_date", "currently_logged", "active_login_sessions"
+		)
+		depth = 1
 
 class MachineLoginSessionSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -50,5 +54,8 @@ class LogEntrySerializer(serializers.ModelSerializer):
 class AlertSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Alert
-		fields = make_all_fields(Alert)
+		fields = (
+			"id", "log_entry", "alert_type", "machines", "user", "text"
+		)
+		depth = 1
 

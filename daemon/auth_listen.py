@@ -26,7 +26,7 @@ def auth_listener(machineid, headers, SERVER_URL):
 				"display" : line
 			}
 			text = json.dumps(data)
-			r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp}, headers=headers)
+			r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp, "username" : username}, headers=headers)
 			try:
 				print r.json()
 			except:
@@ -35,7 +35,9 @@ def auth_listener(machineid, headers, SERVER_URL):
 		else:
 			x = line.find("incorrect password")
 			if x >= 0:
-				count = line.split(" incorrect password")[0].split(" ")[-1]
+				y = line.split(" incorrect password")[0]
+				count = y.split(" ")[-1]
+				username = y.split(" ")[-3]
 				timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[1:3]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
 				command = line[line.find("COMMAND=") + 8:-1]
 				pwd = line[line.find("PWD=") + 4:-1].split(" ")[0]
@@ -47,7 +49,7 @@ def auth_listener(machineid, headers, SERVER_URL):
 					"display" : line
 				}
 				text = json.dumps(data)
-				r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp}, headers=headers)
+				r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp, "username" : username}, headers=headers)
 				try:
 					print r.json()
 				except:
@@ -56,6 +58,8 @@ def auth_listener(machineid, headers, SERVER_URL):
 			else:
 				x = line.find("COMMAND")
 				if x >= 0:
+					username = line.split("sudo:")[1].strip().split(" ")[0]
+					print username
 					timestamp = datetime.datetime.strptime(" ".join([line.split(" ")[0]] + line.split(" ")[2:4]), "%b  %d %H:%M:%S").replace(year=datetime.datetime.now().year).isoformat()
 					command = line[line.find("COMMAND=") + 8:-1]
 					pwd = line[line.find("PWD=") + 4:-1].split(" ")[0]
@@ -66,7 +70,7 @@ def auth_listener(machineid, headers, SERVER_URL):
 						"display" : line
 					}
 					text = json.dumps(data)
-					r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp}, headers=headers)
+					r = requests.post(SERVER_URL+"logentry/", data={"log_entry_type":1, "text":text, "machine":machineid, "timestamp":timestamp, "username" : username}, headers=headers)
 					try:
 						print r.json()
 					except:

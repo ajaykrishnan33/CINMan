@@ -86,6 +86,8 @@ class Alert(models.Model):
     )
     log_entry = models.OneToOneField('LogEntry', null=True, blank=True, related_name="alert")
     alert_type = models.IntegerField(choices=ALERT_NATURE)
+    machines = models.ManyToManyField(Machine, related_name="machine_alerts")
+    user = models.ForeignKey('MachineUser', null=True, blank=True, related_name="alerts")
     text = models.TextField(null=True, blank=True)
 
     def __unicode__(self):

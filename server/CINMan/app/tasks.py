@@ -26,7 +26,11 @@ def update_active_machines():
 	users = MachineUser.objects.all()
 
 	for u in users:
-	    ipcount = len(set([d.ip_address for d in u.active_login_sessions.all()]))
-	    if ipcount>1:
-	        a = Alert(alert_type=1, text=u.username+" has logged in from multiple IP addresses.")
+	    iplist = list(set([d.ip_address for d in u.active_login_sessions.all()]))
+	    if len(iplist)>1:
+	        a = Alert(alert_type=1, user=u, text=u.username+" has logged in from multiple IP addresses.")
 	        a.save()
+	        mach_list = Machine.objects.filter(ip_address__in=iplist)
+	        for m in mach_list:
+	        	a.machines.add(m)
+	
