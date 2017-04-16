@@ -4,3 +4,4 @@
 */nohup.out
 */dump.rdb
 */db.sqlite3
+*/migrations/*
