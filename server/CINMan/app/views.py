@@ -129,7 +129,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 class AlertListView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
-    queryset = Alert.objects.all()
+    queryset = Alert.objects.all().order_by('-id')
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, )
     filter_class = AlertFilter
@@ -149,7 +149,7 @@ class MachineLoginSessionDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class LogEntryListView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
-    queryset = LogEntry.objects.all()
+    queryset = LogEntry.objects.all().order_by('-id')
     filter_backends = (DjangoFilterBackend, )
     filter_class = LogEntryFilter
     serializer_class = LogEntrySerializer

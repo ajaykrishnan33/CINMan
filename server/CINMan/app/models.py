@@ -128,27 +128,6 @@ class LogEntry(models.Model):
         message = RedisMessage("Log")
         init_pk = self.pk
         super(LogEntry, self).save(*args, **kwargs)
-        # and somewhere else
-        # if init_pk is None:
-        #     a = json.loads(self.text)
-        #     if a["event"]=="usb_connect":
-        #         alert = Alert(alert_type=2,user_id=self.user_id,text="USB Connected")
-        #     elif a["event"]=="package_install":
-        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Package Installed")
-        #     elif a["event"]=="package_remove":
-        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Package Removed")
-        #     elif a["event"]=="usb_disconnect":
-        #         alert = Alert(alert_type=1,user_id=self.user_id,text="USB Disconnected")
-        #     elif a["event"]=="auth_failure":
-        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Failed Authorization")
-        #     elif a["event"]=="sudo_access":
-        #         alert = Alert(alert_type=1,user_id=self.user_id,text="SUDO Access Attempted")
-        #     elif a["event"]=="incorrect_password":
-        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Incorrect Password")
-
-        #     alert.save()
-        #     alert.machines.add(self.machine)
-
         redis_publisher.publish_message(message)
   
 

@@ -32,9 +32,21 @@ t4.start()
 while True:
 	if not t1.isAlive():
 		print "background thread dead"
+		t1 = threading.Thread(target=maintain_contact, args=(machine_id, headers, SERVER_URL))
+		t1.start()
+		print "restarting background thread"
 	if not t2.isAlive():
 		print "auth_listener thread dead"
+		t2 = threading.Thread(target=auth_listener, args=(machine_id, headers, SERVER_URL))
+		t2.start()
+		print "restarting auth_listener thread"
 	if not t3.isAlive():
 		print "dpkg_listener thread dead"
+		t3 = threading.Thread(target=dpkg_listener, args=(machine_id, headers, SERVER_URL))
+		t3.start()
+		print "restarting dpkg_listener thread"
 	if not t4.isAlive():
 		print "peri_listener thread dead"
+		t4 = threading.Thread(target=peri_listener, args=(machine_id, headers, SERVER_URL))
+		t4.start()
+		print "restarting peri_listener thread"
