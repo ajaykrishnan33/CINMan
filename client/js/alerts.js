@@ -34,7 +34,17 @@ $(document).ready(function(){
 			    for(var i=0;i<Math.min(response["count"],10);i++){
 			    	alerts.push(response["results"][i]["text"]);
 					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+'</span></a></li><li class="divider"></li>');
-					$("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='#'>"+response["results"][i]["text"]+"</a></div><div class='position'></div><div class='time'></div></div></li>");
+                    if(response["results"][i]["machines"].length>1){
+                        var str = "";
+                        for(var j=0;j<response["results"][i]["machines"].length;j++)
+                            str = str+response["results"][i]["machines"][j]["ip_address"]
+                        localStorage.setItem("last-user-id",response["results"][i]["user"]["id"])
+                        $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='user.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+str+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
+                    }
+                    else{
+                       localStorage.setItem("last-machine-id",response["results"][i]["machines"][0]["id"])
+					   $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='activity.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+response["results"][i]["machines"][0]["ip_address"]+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
+                    }
 			    }
 			    $("#alerts-drp").append('<li><a href="alerts.html">Go to Alerts</a></li>');
 			}
