@@ -63,7 +63,8 @@ $(document).ready(function(){
 		    	$("#numalerts").text(Math.min(response["count"],10));
 			    for(var i=0;i<Math.min(response["count"],10);i++){
 			    	alerts.push(response["results"][i]["text"]);
-					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+'</span></a></li><li class="divider"></li>');				    	
+					localStorage.setItem("last-machine-id",response["results"][i]["machines"][0]["id"])
+					$("#alerts-drp").append('<li class="message-preview"><a href="activity.html"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+"("+response["results"][i]["machines"][0]["ip_address"]+")"+'</span></a></li><li class="divider"></li>');				    	
 			    }
 			    $("#alerts-drp").append('<li><a href="alerts.html">Go to Alerts</a></li>');
 			}

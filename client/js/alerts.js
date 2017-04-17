@@ -21,7 +21,7 @@ $(document).ready(function(){
 		$.ajax
 		  ({
 		    type: "GET",
-		    url: "http://"+host+":"+port+"/app/alert/",
+		    url: "http://"+host+":"+port+"/app/alert/?page_size=20",
 		    dataType: 'json',
 		    async: false,
 		    beforeSend: function (xhr) {
@@ -33,23 +33,31 @@ $(document).ready(function(){
 		    	$("#numalerts").text(Math.min(response["count"],10));
 			    for(var i=0;i<Math.min(response["count"],10);i++){
 			    	alerts.push(response["results"][i]["text"]);
-					$("#alerts-drp").append('<li class="message-preview"><a href="#"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+'</span></a></li><li class="divider"></li>');
+                    localStorage.setItem("last-machine-id",response["results"][i]["machines"][0]["id"])
+					$("#alerts-drp").append('<li class="message-preview"><a href="machine.html"><span class="avatar"><i class="fa fa-bell"></i></span><span class="message">'+response["results"][i]["text"]+"("+response["results"][i]["machines"][0]["ip_address"]+")"+'</span></a></li><li class="divider"></li>');
                     if(response["results"][i]["machines"].length>1){
                         var str = "";
                         for(var j=0;j<response["results"][i]["machines"].length;j++)
                             str = str+response["results"][i]["machines"][j]["ip_address"]
                         localStorage.setItem("last-user-id",response["results"][i]["user"]["id"])
-                        $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='user.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+str+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
+                        $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a data-id="+response["results"][i]["machines"][0]["id"]+" id='al' href='user.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+str+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
                     }
                     else{
                        localStorage.setItem("last-machine-id",response["results"][i]["machines"][0]["id"])
-					   $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='activity.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+response["results"][i]["machines"][0]["ip_address"]+"("+response["results"][i]["user"]["username"]+")"+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
+					   $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a data-id="+response["results"][i]["machines"][0]["id"]+" id='al' href='activity.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+response["results"][i]["machines"][0]["ip_address"]+"("+response["results"][i]["user"]["username"]+")"+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
                     }
 			    }
 			    $("#alerts-drp").append('<li><a href="alerts.html">Go to Alerts</a></li>');
 			}
 		});
 	}
+
+    $(document).on("click","#al",function(){
+        var dat = $(this).attr("data-id");
+        localStorage.setItem("last-machine-id",dat);
+        window.location("activity.html");
+
+    });
 
 	bootstrap_alert = function () {}
 	bootstrap_alert.warning = function (message, alert, timeout) {
