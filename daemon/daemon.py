@@ -1,9 +1,9 @@
-import thread
 import requests
 from background import get_system_info, maintain_contact
 from auth_listen import auth_listener
 from dpkg_listen import dpkg_listener
 from peri_listen import peri_listener
+import threading
 
 f = open("config.txt", "r");
 config = f.read().split("\n");
@@ -20,10 +20,21 @@ if len(res)==0:
 else:
 	machine_id = res[0]["id"]
 
-thread.start_new_thread(maintain_contact, (machine_id, headers, SERVER_URL))
-thread.start_new_thread(auth_listener, (machine_id, headers, SERVER_URL))
-thread.start_new_thread(dpkg_listener, (machine_id, headers, SERVER_URL))
-thread.start_new_thread(peri_listener, (machine_id, headers, SERVER_URL))
+t1 = threading.Thread(target=maintain_contact, args=(machine_id, headers, SERVER_URL))
+t1.start()
+t2 = threading.Thread(target=auth_listener, args=(machine_id, headers, SERVER_URL))
+t2.start()
+t3 = threading.Thread(target=dpkg_listener, args=(machine_id, headers, SERVER_URL))
+t3.start()
+t4 = threading.Thread(target=peri_listener, args=(machine_id, headers, SERVER_URL))
+t4.start()
 
 while True:
-	pass
+	if not t1.isAlive():
+		print "background thread dead"
+	if not t2.isAlive():
+		print "auth_listener thread dead"
+	if not t3.isAlive():
+		print "dpkg_listener thread dead"
+	if not t4.isAlive():
+		print "peri_listener thread dead"

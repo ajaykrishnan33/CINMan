@@ -55,7 +55,7 @@ class AlertSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Alert
 		fields = (
-			"id", "log_entry", "alert_type", "machines", "user", "text"
+			"id", "log_entry", "alert_type", "machines", "user", "text", "timestamp"
 		)
 		depth = 1
 

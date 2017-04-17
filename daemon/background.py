@@ -123,8 +123,8 @@ def maintain_contact(machine_id, headers, SERVER_URL):
 		r = requests.post(SERVER_URL+"machine/"+str(machine_id)+"/periodic/", data=payload, headers=headers)
 
 		try:
-			r.json()
+			x = r.json()
 		except:
-			print r.content
+			print r.content.strip()
 
 		time.sleep(10)

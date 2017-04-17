@@ -158,6 +158,25 @@ class LogEntryListView(generics.ListCreateAPIView):
         obj = serializer.save()
         obj.user = MachineUser.objects.get(username=self.request.data["username"])
         obj.save()
+        a = json.loads(obj.text)
+        if a["event"]=="usb_connect":
+            alert = Alert(log_entry=obj,alert_type=2,user=obj.user,text="USB Connected")
+        elif a["event"]=="package_install":
+            alert = Alert(log_entry=obj,alert_type=1,user=obj.user,text="Package Installed")
+        elif a["event"]=="package_remove":
+            alert = Alert(log_entry=obj,alert_type=1,user=obj.user,text="Package Removed")
+        elif a["event"]=="usb_disconnect":
+            alert = Alert(log_entry=obj,alert_type=1,user=obj.user,text="USB Disconnected")
+        elif a["event"]=="auth_failure":
+            alert = Alert(log_entry=obj,alert_type=1,user=obj.user,text="Failed Authorization")
+        elif a["event"]=="sudo_access":
+            alert = Alert(log_entry=obj,alert_type=1,user=obj.user,text="SUDO Access Attempted")
+        elif a["event"]=="incorrect_password":
+            alert = Alert(log_entry=obj,alert_type=1,user=obj.user,text="Incorrect Password")
+
+        alert.save()
+        alert.machines.add(obj.machine)
+
 
 class LogEntryDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated,)

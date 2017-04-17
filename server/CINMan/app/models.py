@@ -84,6 +84,7 @@ class Alert(models.Model):
     machines = models.ManyToManyField(Machine, related_name="machine_alerts")
     user = models.ForeignKey('MachineUser', null=True, blank=True, related_name="alerts")
     text = models.TextField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return self.text
@@ -128,25 +129,25 @@ class LogEntry(models.Model):
         init_pk = self.pk
         super(LogEntry, self).save(*args, **kwargs)
         # and somewhere else
-        if init_pk is None:
-            a = json.loads(self.text)
-            if a["event"]=="usb_connect":
-                alert = Alert(alert_type=2,user=self.user,text="USB Connected")
-            elif a["event"]=="package_install":
-                alert = Alert(alert_type=1,user=self.user,text="Package Installed")
-            elif a["event"]=="package_remove":
-                alert = Alert(alert_type=1,user=self.user,text="Package Removed")
-            elif a["event"]=="usb_disconnect":
-                alert = Alert(alert_type=1,user=self.user,text="USB Disconnected")
-            elif a["event"]=="auth_failure":
-                alert = Alert(alert_type=1,user=self.user,text="Failed Authorization")
-            elif a["event"]=="sudo_access":
-                alert = Alert(alert_type=1,user=self.user,text="SUDO Access Attempted")
-            elif a["event"]=="incorrect_password":
-                alert = Alert(alert_type=1,user=self.user,text="Incorrect Password")
+        # if init_pk is None:
+        #     a = json.loads(self.text)
+        #     if a["event"]=="usb_connect":
+        #         alert = Alert(alert_type=2,user_id=self.user_id,text="USB Connected")
+        #     elif a["event"]=="package_install":
+        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Package Installed")
+        #     elif a["event"]=="package_remove":
+        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Package Removed")
+        #     elif a["event"]=="usb_disconnect":
+        #         alert = Alert(alert_type=1,user_id=self.user_id,text="USB Disconnected")
+        #     elif a["event"]=="auth_failure":
+        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Failed Authorization")
+        #     elif a["event"]=="sudo_access":
+        #         alert = Alert(alert_type=1,user_id=self.user_id,text="SUDO Access Attempted")
+        #     elif a["event"]=="incorrect_password":
+        #         alert = Alert(alert_type=1,user_id=self.user_id,text="Incorrect Password")
 
-            alert.save()
-            alert.machines.add(self.machine)
+        #     alert.save()
+        #     alert.machines.add(self.machine)
 
         redis_publisher.publish_message(message)
   
