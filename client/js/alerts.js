@@ -43,7 +43,7 @@ $(document).ready(function(){
                     }
                     else{
                        localStorage.setItem("last-machine-id",response["results"][i]["machines"][0]["id"])
-					   $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='activity.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+response["results"][i]["machines"][0]["ip_address"]+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
+					   $("#news-list").append("<li><i class='fa fa-exclamation-mark fa-4x pull-left'></i><div class='news-item-info'><div class='name'><a href='activity.html'>"+response["results"][i]["text"]+"</a></div><div class='position'>"+response["results"][i]["machines"][0]["ip_address"]+"("+response["results"][i]["user"]["username"]+")"+"</div><div class='time'>"+response["results"][i]["timestamp"]+"</div></div></li>");
                     }
 			    }
 			    $("#alerts-drp").append('<li><a href="alerts.html">Go to Alerts</a></li>');
