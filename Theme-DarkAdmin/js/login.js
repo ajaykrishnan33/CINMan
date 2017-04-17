@@ -42,7 +42,9 @@ $(document).ready(function(){
 	           	   }
 	               window.location = 'machines.html';
 	           }
-	    );
+	    ).fail(function() { 
+		   $("#fail").show();
+		});
 	});
 
 	$("#cache").click(function(e)
